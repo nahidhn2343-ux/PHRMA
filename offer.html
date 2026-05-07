@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Special Offers | PHRMA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/png" href="favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<link rel="shortcut icon" href="favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+<meta name="apple-mobile-web-app-title" content="Phrma" />
+<link rel="manifest" href="site.webmanifest" />
+    <style>
+        .modal-blur { backdrop-filter: blur(8px); background-color: rgba(0, 0, 0, 0.4); }
+        .offer-badge { background: linear-gradient(135deg, #f43f5e, #e11d48); }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900 overflow-x-hidden">
+
+    <nav class="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 h-20 flex justify-between items-center">
+        <a href="index.html" class="flex items-center">
+            <img src="img/phrma2.png" alt="PHRMA" class="h-20 w-auto rounded">
+        </a>
+
+        <div class="hidden lg:flex space-x-8 font-medium">
+            <a href="index.html" class="hover:text-teal-600 transition">Home</a>
+            <a href="shop.html" class="hover:text-teal-600 transition">Shop</a>
+            <a href="upload.html" class="hover:text-teal-600 transition">Upload</a>
+            <a href="offer.html" class="text-teal-600 font-bold">Offers</a>
+            <a href="about-us.html" class="hover:text-teal-600 transition">About Us</a>
+        </div>
+
+        <div class="flex items-center space-x-4 md:space-x-6">
+            <a href="login.html">
+                <button class="px-4 md:px-6 py-2 md:py-2.5 bg-gradient-to-r from-teal-500 to-emerald-600 text-white font-bold rounded-xl shadow-lg shadow-teal-200 hover:scale-105 active:scale-95 transition-all text-sm md:text-base">
+                    Login
+                </button>
+            </a>
+
+            <a href="cart.html" class="relative cursor-pointer group">
+                <i class="fa-solid fa-cart-shopping text-xl md:text-2xl text-gray-400 group-hover:text-teal-600 transition"></i>
+                <span id="cart-badge" class="absolute -top-2 -right-2 bg-rose-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border-2 border-white">0</span>
+            </a>
+
+            <button id="menu-btn" class="lg:hidden text-2xl text-gray-700 focus:outline-none">
+                <i class="fa-solid fa-bars-staggered"></i>
+            </button>
+        </div>
+    </div>
+
+    <div id="side-menu" class="fixed inset-0 bg-black/50 z-[60] hidden transition-opacity duration-300 opacity-0">
+        <div class="absolute right-0 top-0 h-full w-[280px] bg-white shadow-2xl p-6 transform translate-x-full transition-transform duration-300">
+            <div class="flex justify-between items-center mb-10">
+                <img src="img/phrma2.png" alt="Logo" class="h-8 rounded">
+                <button id="close-btn" class="text-2xl text-gray-500 hover:text-rose-500 transition"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="flex flex-col space-y-6 font-semibold text-lg text-right">
+                <a href="index.html" class="text-gray-600 hover:text-teal-600 pr-3 transition">Home</a>
+                <a href="shop.html" class="text-gray-600 hover:text-teal-600 pr-3 transition">Shop</a>
+                <a href="upload.html" class="text-gray-600 hover:text-teal-600 pr-3 transition">Upload</a>
+                <a href="offer.html" class="text-teal-600 border-r-4 border-teal-600 pr-3">Offers</a>
+                <a href="about-us.html" class="text-gray-600 hover:text-teal-600 pr-3 transition">About Us</a>
+                
+            </div>
+        </div>
+    </div>
+</nav>
+
+    <section class="bg-gradient-to-b from-teal-50 to-white py-12 md:py-16">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <h1 class="text-3xl md:text-5xl font-extrabold text-gray-900 mb-4">Hot <span class="text-rose-500">Offers</span> 🔥</h1>
+            <p class="text-gray-500 text-lg max-w-2xl mx-auto">Get your healthcare essentials at unbeatable prices. Limited time offers only for you!</p>
+        </div>
+    </section>
+
+    <main class="max-w-7xl mx-auto px-4 py-12">
+        <div id="offers-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
+            </div>
+    </main>
+
+    <div id="offerModal" class="fixed inset-0 z-[100] modal-blur hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-4xl max-h-[90vh] rounded-3xl shadow-2xl overflow-hidden relative flex flex-col md:flex-row">
+            <button id="closeModal" class="absolute top-4 right-4 z-10 bg-gray-100 hover:bg-rose-100 text-gray-500 hover:text-rose-600 w-10 h-10 rounded-full flex items-center justify-center transition-all">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+
+            <div class="w-full md:w-1/2 bg-gray-50 p-8 flex items-center justify-center">
+                <img id="modalImg" src="" alt="" class="max-w-full max-h-full object-contain drop-shadow-xl">
+            </div>
+
+            <div class="w-full md:w-1/2 p-8 md:p-12 overflow-y-auto">
+                <div id="modalOffTag" class="inline-block px-3 py-1 offer-badge text-white text-xs font-bold rounded-full mb-4">20% OFF</div>
+                <h2 id="modalName" class="text-2xl md:text-3xl font-extrabold text-gray-900 mb-2">Product Name</h2>
+                
+                <div class="flex items-center gap-3 mb-6">
+                    <span id="modalOfferPrice" class="text-2xl font-bold text-teal-600">$80</span>
+                    <span id="modalOrigPrice" class="text-lg text-gray-400 line-through">$100</span>
+                </div>
+
+                <div class="space-y-4 mb-8">
+                    <h4 class="font-bold text-gray-800 border-l-4 border-teal-500 pl-3">Description</h4>
+                    <p id="modalDesc" class="text-gray-500 leading-relaxed text-sm md:text-base">
+                        </p>
+                </div>
+
+                <button id="modalAddToCart" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-extrabold py-4 rounded-2xl shadow-lg shadow-teal-200 transition-all flex items-center justify-center gap-2 group">
+                    <i class="fa-solid fa-cart-plus group-hover:scale-110 transition-transform"></i>
+                    Add To Cart
+                </button>
+            </div>
+        </div>
+    </div>
+
+        <footer class="bg-white border-t border-gray-100 pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+            <div>
+                <img src="img/phrma2.png" alt="PHRMA Logo" class="h-12 mb-6 rounded">
+                <p class="text-gray-500 leading-relaxed">Your pharmacy. We ensure the right medicines and sanitisers are delivered straight to your door.</p>
+                <div class="flex space-x-4 mt-6">
+                    <a href="#" class="text-gray-400 hover:text-teal-500 transition text-xl"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-teal-500 transition text-xl"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-teal-500 transition text-xl"><i class="fa-brands fa-whatsapp"></i></a>
+                </div>
+            </div>
+
+            <div>
+                <h4 class="text-gray-900 font-bold mb-6">Quick Links</h4>
+                <ul class="space-y-4 text-gray-500">
+                    <li><a href="shop.html" class="hover:text-teal-500 transition">All Medicines</a></li>
+                    <li><a href="upload.html" class="hover:text-teal-500 transition">Upload Prescription</a></li>
+                    <li><a href="offer.html" class="hover:text-teal-500 transition">Special Offers</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="text-gray-900 font-bold mb-6">Support</h4>
+                <ul class="space-y-4 text-gray-500">
+                    <li><a href="#" class="hover:text-teal-500 transition">Order Tracking</a></li>
+                    <li><a href="#" class="hover:text-teal-500 transition">Return Policy</a></li>
+                    <li><a href="#" class="hover:text-teal-500 transition">Terms & Conditions</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="text-gray-900 font-bold mb-6">Contact Us</h4>
+                <ul class="space-y-4">
+                    <li class="flex items-center space-x-3 text-gray-500">
+                        <i class="fa-solid fa-location-dot text-teal-500"></i>
+                        <span>Dhaka, Bangladesh</span>
+                    </li>
+                    <li class="flex items-center space-x-3 text-gray-500">
+                        <i class="fa-solid fa-phone text-teal-500"></i>
+                        <span>+880 1234 567 890</span>
+                    </li>
+                    <li class="flex items-center space-x-3 text-gray-500">
+                        <i class="fa-solid fa-envelope text-teal-500"></i>
+                        <span>support@phrma.com</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 mt-16 pt-8 border-t border-gray-50 flex flex-col md:flex-row justify-between items-center text-gray-400 text-sm">
+            <p>&copy; 2026 PHRMA. All rights reserved.</p>
+            <div class="flex items-center space-x-6 mt-4 md:mt-0">
+                <i class="fa-brands fa-cc-visa text-2xl"></i>
+                <i class="fa-brands fa-cc-mastercard text-2xl"></i>
+                <span class="font-bold text-teal-500 uppercase tracking-widest text-xs">Cash on Delivery Available</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const modal = document.getElementById('offerModal');
+        const closeModal = document.getElementById('closeModal');
+        const addToCartBtn = document.getElementById('modalAddToCart');
+
+        // পপ-আপ বন্ধ করার ফাংশন
+        closeModal.onclick = () => {
+            modal.classList.add('hidden');
+            document.body.style.overflow = 'auto'; // স্ক্রল এনাবল
+        }
+
+        // পপ-আপের বাইরে ক্লিক করলে বন্ধ হবে
+        window.onclick = (event) => {
+            if (event.target == modal) {
+                modal.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        // Add to Cart লজিক
+        addToCartBtn.onclick = function() {
+            // আপনার script.js ফাইলে থাকা কার্ট ফাংশনকে এখানে কল করবেন
+            const productId = this.getAttribute('data-id');
+            console.log("Product added to cart:", productId);
+            
+            // একটি সাকসেস মেসেজ দেখানো যায়
+            this.innerHTML = '<i class="fa-solid fa-check"></i> Added!';
+            this.classList.replace('bg-teal-600', 'bg-emerald-600');
+            
+            setTimeout(() => {
+                this.innerHTML = '<i class="fa-solid fa-cart-plus"></i> Add To Cart';
+                this.classList.replace('bg-emerald-600', 'bg-teal-600');
+                modal.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            }, 800);
+        }
+    </script>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>

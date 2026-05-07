@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHRMA | Online Pharmacy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/png" href="favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<link rel="shortcut icon" href="favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+<meta name="apple-mobile-web-app-title" content="Phrma" />
+<link rel="manifest" href="site.webmanifest" />
+</head>
+<body class="bg-gray-50 text-gray-900 overflow-x-hidden">
+
+    <nav class="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 h-20 flex justify-between items-center">
+        <a href="index.html" class="flex items-center">
+            <img src="img/phrma2.png" alt="PHRMA" class="h-20 w-auto rounded">
+        </a>
+
+        <div class="hidden lg:flex space-x-8 font-medium">
+            <a href="index.html" class="text-teal-600 font-bold">Home</a>
+            <a href="shop.html" class="hover:text-teal-600 transition">Shop</a>
+            <a href="upload.html" class="hover:text-teal-600 transition">Upload</a>
+            <a href="offer.html" class="hover:text-teal-600 transition">Offers</a>
+            <a href="about-us.html" class="hover:text-teal-600 transition">About Us</a>
+        </div>
+
+        <div class="flex items-center space-x-4 md:space-x-6">
+            <a href="login.html">
+                <button class="px-4 md:px-6 py-2 md:py-2.5 bg-gradient-to-r from-teal-500 to-emerald-600 text-white font-bold rounded-xl shadow-lg shadow-teal-200 hover:scale-105 active:scale-95 transition-all text-sm md:text-base">
+                    Login
+                </button>
+            </a>
+            
+            <a href="cart.html" class="relative cursor-pointer group">
+                <i class="fa-solid fa-cart-shopping text-xl md:text-2xl text-gray-400 group-hover:text-teal-600 transition"></i>
+                <span id="cart-badge" class="absolute -top-2 -right-2 bg-rose-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border-2 border-white">0</span>
+            </a>
+
+            <button id="menu-btn" class="lg:hidden text-2xl text-gray-700 focus:outline-none">
+                <i class="fa-solid fa-bars-staggered"></i>
+            </button>
+        </div>
+    </div>
+
+    <div id="side-menu" class="fixed inset-0 bg-black/40 z-[60] hidden transition-opacity duration-300 opacity-0">
+        <div class="absolute right-0 top-0 h-full w-72 shadow-2xl p-6 transform translate-x-full transition-transform duration-300 flex flex-col" style="background-color: rgba(255, 255, 255, 0.9); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);">
+            <div class="flex justify-between items-center mb-10">
+                <img src="img/phrma2.png" alt="Logo" class="h-8 rounded">
+                <button id="close-btn" class="text-2xl text-gray-500 hover:text-rose-500 transition"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="flex flex-col space-y-6 font-semibold text-lg text-right">
+                <a href="index.html" class="text-teal-600 border-r-4 border-teal-600 pr-3">Home</a>
+                <a href="shop.html" class="text-gray-600 hover:text-teal-600 pr-3 transition">Shop</a>
+                <a href="upload.html" class="text-gray-600 hover:text-teal-600 pr-3 transition">Upload</a>
+                <a href="offer.html" class="text-gray-600 hover:text-teal-600 pr-3 transition">Offers</a>
+                <a href="about-us.html" class="text-gray-600 hover:text-teal-600 pr-3 transition">About Us</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+    <section class="relative min-h-[500px] lg:h-[600px] flex items-center bg-white overflow-hidden py-10 lg:py-0">
+        <div class="max-w-7xl mx-auto px-4 w-full flex flex-col lg:flex-row items-center justify-between gap-10">
+            
+            <div class="w-full lg:w-1/2 text-center lg:text-left z-20">
+                <div class="hidden lg:block">
+                    <h1 class="text-5xl lg:text-7xl font-extrabold leading-tight text-gray-900">
+                        Trusted <span class="text-teal-600">Healthcare</span> <br>At Your Door.
+                    </h1>
+                </div>
+                <div class="lg:hidden">
+                    <h1 class="text-4xl font-extrabold text-gray-900">
+                        Trusted <span class="text-teal-600">Healthcare</span> At Your Door.
+                    </h1>
+                </div>
+                <p class="mt-6 text-lg text-gray-500 max-w-lg mx-auto lg:mx-0">
+                    Order your daily medicines and healthcare essentials with PHRMA. Safe delivery and authentic products.
+                </p>
+
+                <div class="mt-6 lg:mt-10 w-full max-w-md mx-auto lg:mx-0">
+                    <div class="flex bg-gray-100 p-2 rounded-2xl border-2 border-transparent focus-within:border-teal-500 focus-within:bg-white transition-all shadow-sm">
+                        <input type="text" id="mainSearch" placeholder="Search medicines..." class="flex-1 bg-transparent px-4 outline-none text-gray-700 text-sm md:text-base">
+                        <button class="bg-teal-600 text-white px-5 py-2.5 rounded-xl font-bold hover:bg-teal-700 transition">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-full lg:w-1/2 relative flex justify-center lg:justify-end order-first lg:order-last">
+                <div class="absolute inset-0 bg-teal-100 rounded-full blur-3xl opacity-20 animate-pulse lg:translate-x-1/4"></div>
+                <img src="img/hero2.png" alt="Hero" class="relative rounded-3xl shadow-xl border-4 md:border-8 border-white w-full max-w-[500px] object-cover h-[300px] md:h-[400px] lg:h-[450px]">
+            </div>
+        </div>
+    </section>
+
+    <section class="py-12 md:py-20 max-w-7xl mx-auto px-4">
+        <div class="flex justify-between items-end mb-8 md:mb-12">
+            <div class="text-left">
+                <h2 class="text-2xl md:text-3xl font-extrabold text-gray-900 italic">Famous Products</h2>
+                <div class="h-1 w-16 md:w-20 bg-teal-500 mt-2"></div>
+            </div>
+            <a href="shop.html" class="text-teal-600 font-bold hover:underline text-sm md:text-base">View All Shop →</a>
+        </div>
+        
+        <div id="famous-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
+            </div>
+    </section>
+
+    <footer class="bg-white border-t border-gray-100 pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+            <div>
+                <img src="img/phrma2.png" alt="PHRMA Logo" class="h-12 mb-6 rounded">
+                <p class="text-gray-500 leading-relaxed">Your pharmacy. We ensure the right medicines and sanitisers are delivered straight to your door.</p>
+                <div class="flex space-x-4 mt-6">
+                    <a href="#" class="text-gray-400 hover:text-teal-500 transition text-xl"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-teal-500 transition text-xl"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-teal-500 transition text-xl"><i class="fa-brands fa-whatsapp"></i></a>
+                </div>
+            </div>
+
+            <div>
+                <h4 class="text-gray-900 font-bold mb-6">Quick Links</h4>
+                <ul class="space-y-4 text-gray-500">
+                    <li><a href="shop.html" class="hover:text-teal-500 transition">All Medicines</a></li>
+                    <li><a href="upload.html" class="hover:text-teal-500 transition">Upload Prescription</a></li>
+                    <li><a href="offer.html" class="hover:text-teal-500 transition">Special Offers</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="text-gray-900 font-bold mb-6">Support</h4>
+                <ul class="space-y-4 text-gray-500">
+                    <li><a href="#" class="hover:text-teal-500 transition">Order Tracking</a></li>
+                    <li><a href="#" class="hover:text-teal-500 transition">Return Policy</a></li>
+                    <li><a href="#" class="hover:text-teal-500 transition">Terms & Conditions</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="text-gray-900 font-bold mb-6">Contact Us</h4>
+                <ul class="space-y-4">
+                    <li class="flex items-center space-x-3 text-gray-500">
+                        <i class="fa-solid fa-location-dot text-teal-500"></i>
+                        <span>Dhaka, Bangladesh</span>
+                    </li>
+                    <li class="flex items-center space-x-3 text-gray-500">
+                        <i class="fa-solid fa-phone text-teal-500"></i>
+                        <span>+880 1234 567 890</span>
+                    </li>
+                    <li class="flex items-center space-x-3 text-gray-500">
+                        <i class="fa-solid fa-envelope text-teal-500"></i>
+                        <span>support@phrma.com</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 mt-16 pt-8 border-t border-gray-50 flex flex-col md:flex-row justify-between items-center text-gray-400 text-sm">
+            <p>&copy; 2026 PHRMA. All rights reserved.</p>
+            <div class="flex items-center space-x-6 mt-4 md:mt-0">
+                <i class="fa-brands fa-cc-visa text-2xl"></i>
+                <i class="fa-brands fa-cc-mastercard text-2xl"></i>
+                <span class="font-bold text-teal-500 uppercase tracking-widest text-xs">Cash on Delivery Available</span>
+            </div>
+        </div>
+    </footer>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>

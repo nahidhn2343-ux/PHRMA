@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart | PHRMA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/png" href="favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<link rel="shortcut icon" href="favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+<meta name="apple-mobile-web-app-title" content="Phrma" />
+<link rel="manifest" href="site.webmanifest" />
+</head>
+<body class="bg-gray-50 text-gray-900 overflow-x-hidden">
+
+    <nav class="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 h-20 flex justify-between items-center">
+            <a href="index.html" class="flex items-center">
+                <img src="img/phrma2.png" alt="PHRMA" class="h-12 md:h-20 w-auto rounded">
+            </a>
+
+            <div class="hidden lg:flex space-x-8 font-medium">
+                <a href="index.html" class="hover:text-teal-600 transition">Home</a>
+                <a href="shop.html" class="hover:text-teal-600 transition">Shop</a>
+                <a href="upload.html" class="hover:text-teal-600 transition">Upload</a>
+                <a href="offer.html" class="hover:text-teal-600 transition">Offers</a>
+                <a href="about-us.html" class="hover:text-teal-600 transition">About Us</a>
+            </div>
+
+            <div class="flex items-center space-x-4 md:space-x-6">
+                <a href="login.html">
+                <button class="px-4 md:px-6 py-2 md:py-2.5 bg-gradient-to-r from-teal-500 to-emerald-600 text-white font-bold rounded-xl shadow-lg shadow-teal-200 hover:scale-105 active:scale-95 transition-all text-sm md:text-base">
+                    Login
+                </button>
+            </a>
+                
+                <div class="relative cursor-pointer group">
+                    <i class="fa-solid fa-cart-shopping text-xl md:text-2xl text-teal-600 transition"></i>
+                    <span id="cart-badge" class="absolute -top-2 -right-2 bg-rose-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border-2 border-white">0</span>
+                </div>
+
+                <button id="menu-btn" class="lg:hidden text-2xl text-gray-700 focus:outline-none">
+                    <i class="fa-solid fa-bars-staggered"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 py-10 md:py-16">
+        <h1 class="text-3xl font-extrabold mb-10 italic border-l-8 border-teal-500 pl-4">Shopping <span class="text-teal-600">Cart</span></h1>
+
+        <div class="flex flex-col lg:flex-row gap-8">
+            <div class="w-full lg:w-8/12 space-y-6" id="cart-items-container">
+                </div>
+
+            <div class="w-full lg:w-4/12">
+                <div class="bg-white p-8 rounded-[2.5rem] shadow-xl shadow-teal-900/5 border border-gray-100 sticky top-28">
+                    <h2 class="text-2xl font-bold mb-8">Order Summary</h2>
+                    
+                    <div class="space-y-4 mb-8">
+                        <div class="flex justify-between text-gray-500 font-medium">
+                            <span>Subtotal</span>
+                            <span id="subtotal" class="text-gray-900 font-bold">৳0.00</span>
+                        </div>
+                        <div class="flex justify-between text-gray-500 font-medium">
+                            <span>Delivery Fee</span>
+                            <span id="delivery-fee" class="text-gray-900 font-bold">৳2.00</span>
+                        </div>
+                        <div class="flex justify-between text-gray-500 font-medium italic">
+                            <span>Discount Applied</span>
+                            <span id="discount" class="text-rose-500 font-bold">-৳0.00</span>
+                        </div>
+                        <div class="h-px bg-gray-100 my-4"></div>
+                        <div class="flex justify-between text-xl font-extrabold">
+                            <span>Total</span>
+                            <span id="grand-total" class="text-teal-600">৳0.00</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <button class="w-full bg-gradient-to-r from-teal-500 to-emerald-600 text-white font-extrabold py-5 rounded-2xl shadow-lg shadow-teal-200 hover:scale-[1.02] active:scale-95 transition-all text-lg flex items-center justify-center gap-3">
+                            Checkout Now <i class="fa-solid fa-arrow-right-long"></i>
+                        </button>
+                        <a href="shop.html" class="block text-center text-gray-400 font-bold hover:text-teal-600 transition py-2 underline underline-offset-4">Continue Shopping</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-white border-t border-gray-100 pt-16 pb-8">
+        <div class="text-center text-gray-400 text-sm mt-16">&copy; 2026 PHRMA. All rights reserved.</div>
+    </footer>
+
+    <script>
+        // ১. ডাটা লোড করা
+        let cart = JSON.parse(localStorage.getItem('PHRMA_CART')) || [];
+        const DELIVERY_FEE = 2.00;
+
+        function renderCart() {
+            const container = document.getElementById('cart-items-container');
+            const badge = document.getElementById('cart-badge');
+            container.innerHTML = '';
+            
+            // কার্ট খালি থাকলে মেসেজ দেখাবে
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-20 bg-white rounded-[2rem] border-2 border-dashed border-gray-200">
+                        <i class="fa-solid fa-cart-plus text-5xl text-gray-200 mb-4"></i>
+                        <p class="text-gray-400 font-bold text-xl">Your cart is empty!</p>
+                        <a href="shop.html" class="inline-block mt-4 text-teal-600 font-bold hover:underline">Go to Shop</a>
+                    </div>`;
+                updateSummary(0);
+                if(badge) badge.innerText = '0';
+                return;
+            }
+
+            let subtotal = 0;
+            let totalQty = 0;
+
+            cart.forEach(item => {
+                const itemTotal = parseFloat(item.price) * item.qty;
+                subtotal += itemTotal;
+                totalQty += item.qty;
+
+                // ID স্ট্রিং বা নাম্বার যাই হোক হ্যান্ডেল করার জন্য '${item.id}' ব্যবহার করা হয়েছে
+                container.innerHTML += `
+                <div class="bg-white p-4 md:p-6 rounded-3xl shadow-sm border border-gray-100 flex items-center gap-4 md:gap-6 group">
+                    <div class="w-20 h-20 md:w-28 md:h-28 bg-gray-50 rounded-2xl flex-shrink-0 overflow-hidden p-2">
+                        <img src="${item.img}" class="w-full h-full object-contain group-hover:scale-110 transition-transform">
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="text-lg font-bold text-gray-900 truncate">${item.name}</h3>
+                        <p class="text-xs text-gray-400 mb-2 uppercase tracking-widest font-bold">${item.category || 'Medicine'}</p>
+                        <div class="flex items-center gap-3">
+                            <span class="text-teal-600 font-bold text-lg italic">৳${itemTotal.toFixed(2)}</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-end justify-between h-20 md:h-28">
+                        <button onclick="removeItem('${item.id}')" class="text-gray-200 hover:text-rose-500 transition text-xl">
+                            <i class="fa-solid fa-circle-xmark"></i>
+                        </button>
+                        <div class="flex items-center bg-gray-100 rounded-xl p-1 border border-gray-200">
+                            <button onclick="changeQty('${item.id}', -1)" class="w-8 h-8 flex items-center justify-center hover:bg-white rounded-lg transition text-teal-600"><i class="fa-solid fa-minus text-xs"></i></button>
+                            <span class="px-3 font-bold text-sm">${item.qty}</span>
+                            <button onclick="changeQty('${item.id}', 1)" class="w-8 h-8 flex items-center justify-center hover:bg-white rounded-lg transition text-teal-600"><i class="fa-solid fa-plus text-xs"></i></button>
+                        </div>
+                    </div>
+                </div>`;
+            });
+
+            if(badge) badge.innerText = totalQty;
+            updateSummary(subtotal);
+        }
+
+        // ২. কোয়ান্টিটি পরিবর্তন
+        window.changeQty = function(id, delta) {
+            const item = cart.find(p => p.id == id);
+            if (item) {
+                item.qty += delta;
+                if (item.qty < 1) item.qty = 1;
+                saveCart();
+            }
+        }
+
+        // ৩. আইটেম রিমুভ
+        window.removeItem = function(id) {
+            cart = cart.filter(p => p.id != id);
+            saveCart();
+        }
+
+        // ৪. মেমোরিতে সেভ
+        function saveCart() {
+            localStorage.setItem('PHRMA_CART', JSON.stringify(cart));
+            renderCart();
+        }
+
+        // ৫. অর্ডার সামারি আপডেট
+        function updateSummary(subtotal) {
+            let discount = subtotal > 500 ? subtotal * 0.1 : 0; // ৫০০ টাকার বেশি হলে ১০% ডিসকাউন্ট
+            let grandTotal = subtotal > 0 ? (subtotal + DELIVERY_FEE - discount) : 0;
+
+            document.getElementById('subtotal').innerText = `৳${subtotal.toFixed(2)}`;
+            document.getElementById('discount').innerText = `-৳${discount.toFixed(2)}`;
+            document.getElementById('grand-total').innerText = `৳${grandTotal.toFixed(2)}`;
+        }
+
+        document.addEventListener('DOMContentLoaded', renderCart);
+    </script>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Access | PHRMA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link rel="icon" type="image/png" href="favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<link rel="shortcut icon" href="favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+<meta name="apple-mobile-web-app-title" content="Phrma" />
+<link rel="manifest" href="site.webmanifest" />
+    <style>
+        .active-tab { border-bottom: 3px solid #0d9488; color: #0d9488; }
+        input:focus { box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.1); }
+    </style>
+</head>
+<body class="bg-[#F1F5F9] flex items-center justify-center min-h-screen font-['Inter']">
+
+    <div class="bg-white flex flex-col md:flex-row rounded-[2.5rem] shadow-[0_20px_60px_rgba(0,0,0,0.07)] overflow-hidden max-w-5xl w-full mx-4 min-h-[720px] relative">
+        
+        <div class="hidden md:flex md:w-[42%] bg-slate-900 p-16 text-white flex-col justify-between relative overflow-hidden">
+            <div class="z-10">
+                <img src="img/phrma2.png" alt="Logo" class="h-16 brightness-0 invert mb-10">
+                <h2 class="text-5xl font-extrabold leading-tight tracking-tight">Care Beyond <br>Medicine.</h2>
+                <p class="mt-6 text-slate-400 text-lg">Your health data, prescriptions, and orders—secured and accessible in one place.</p>
+            </div>
+            
+            <div class="absolute -bottom-20 -right-20 w-80 h-80 bg-teal-500/20 rounded-full blur-3xl"></div>
+            <div class="z-10 text-sm font-medium opacity-40">©️ 2026 PHRMA Health System</div>
+        </div>
+
+        <div class="w-full md:w-[58%] p-8 md:p-14 flex flex-col justify-between relative">
+            
+            <div class="absolute top-6 right-8">
+                <a href="index.html" class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-500 to-emerald-600 text-white text-xs font-bold rounded-full shadow-lg shadow-teal-200 hover:-translate-y-1 transition-all duration-300">
+                    <i class="fa-solid fa-house"></i> Home
+                </a>
+            </div>
+
+            <div class="mt-4">
+                <div class="flex space-x-8 mb-10 border-b border-gray-100">
+                    <button onclick="toggleForm('login')" id="login-tab" class="pb-4 text-lg font-bold transition-all active-tab">Login</button>
+                    <button onclick="toggleForm('signup')" id="signup-tab" class="pb-4 text-lg font-bold text-gray-400 hover:text-gray-600 transition-all">Sign Up</button>
+                </div>
+
+                <div id="login-form" class="space-y-6">
+                    <div class="space-y-5">
+                        <div>
+                            <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2">Email Address</label>
+                            <input type="email" id="login-email" placeholder="name@email.com" class="w-full px-5 py-4 rounded-2xl bg-gray-50 border border-transparent focus:bg-white focus:border-teal-500 outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2">Password</label>
+                            <input type="password" id="login-password" placeholder="••••••••" class="w-full px-5 py-4 rounded-2xl bg-gray-50 border border-transparent focus:bg-white focus:border-teal-500 outline-none transition-all">
+                        </div>
+                    </div>
+                    <div class="flex justify-end">
+                        <a href="#" class="text-sm font-bold text-teal-600 hover:text-teal-700">Forgot Password?</a>
+                    </div>
+                    <button onclick="handleLogin()" class="w-full bg-slate-900 text-white font-bold py-5 rounded-2xl shadow-xl hover:bg-teal-700 transition-all active:scale-[0.98]">Login</button>
+                </div>
+
+                <div id="signup-form" class="space-y-5 hidden">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2">First Name</label>
+                            <input type="text" id="signup-fname" placeholder="John" class="w-full px-5 py-4 rounded-2xl bg-gray-50 border border-transparent focus:bg-white focus:border-teal-500 outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2">Last Name</label>
+                            <input type="text" id="signup-lname" placeholder="Doe" class="w-full px-5 py-4 rounded-2xl bg-gray-50 border border-transparent focus:bg-white focus:border-teal-500 outline-none transition-all">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2">Email</label>
+                        <input type="email" id="signup-email" placeholder="name@email.com" class="w-full px-5 py-4 rounded-2xl bg-gray-50 border border-transparent focus:bg-white focus:border-teal-500 outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2">Set Password</label>
+                        <input type="password" id="signup-password" placeholder="••••••••" class="w-full px-5 py-4 rounded-2xl bg-gray-50 border border-transparent focus:bg-white focus:border-teal-500 outline-none transition-all">
+                    </div>
+                    <button onclick="handleSignUp()" class="w-full bg-teal-600 text-white font-bold py-5 rounded-2xl shadow-xl hover:bg-teal-700 transition-all active:scale-[0.98]">Create Account</button>
+                </div>
+
+                <div class="mt-10">
+                    <div class="relative flex py-4 items-center mb-6">
+                        <div class="flex-grow border-t border-gray-100"></div>
+                        <span class="flex-shrink mx-4 text-[10px] font-bold text-gray-300 uppercase tracking-widest">Or access with</span>
+                        <div class="flex-grow border-t border-gray-100"></div>
+                    </div>
+                    <div class="flex gap-4">
+                        <button onclick="loginWithGoogle()" class="flex-1 flex justify-center items-center py-4 rounded-2xl border border-gray-100 hover:bg-gray-50 transition-all">
+                            <img src="img/google.png" class="w-12" alt="Google">
+                        </button>
+                        <button onclick="loginWithFacebook()" class="flex-1 flex justify-center items-center py-4 rounded-2xl bg-[#1877F2] text-white hover:opacity-90 transition-all">
+                            <i class="fa-brands fa-facebook-f text-lg"></i>
+                        </button>
+                        <button class="flex-1 flex justify-center items-center py-4 rounded-2xl bg-black text-white hover:opacity-90 transition-all">
+                            <i class="fa-brands fa-apple text-2xl"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end mt-10">
+                <a href="admin-login.html" class="flex items-center gap-2 text-[10px] font-bold text-gray-300 hover:text-teal-600 transition-all uppercase tracking-widest">
+                    Admin Portal <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="script.js"></script>
+
+    <script>
+        // Tab switching logic
+        function toggleForm(type) {
+            const loginForm = document.getElementById('login-form');
+            const signupForm = document.getElementById('signup-form');
+            const loginTab = document.getElementById('login-tab');
+            const signupTab = document.getElementById('signup-tab');
+
+            if (type === 'login') {
+                loginForm.classList.remove('hidden');
+                signupForm.classList.add('hidden');
+                loginTab.classList.add('active-tab');
+                loginTab.classList.remove('text-gray-400');
+                signupTab.classList.remove('active-tab');
+                signupTab.classList.add('text-gray-400');
+            } else {
+                signupForm.classList.remove('hidden');
+                loginForm.classList.add('hidden');
+                signupTab.classList.add('active-tab');
+                signupTab.classList.remove('text-gray-400');
+                loginTab.classList.remove('active-tab');
+                loginTab.classList.add('text-gray-400');
+            }
+        }
+    </script>
+</body>
+</html>
