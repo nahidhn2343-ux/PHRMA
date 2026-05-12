@@ -7,17 +7,20 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="favicon-96x96.png" sizes="96x96" />
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F8FAFC; }
         .sidebar-item.active { background-color: #D9F99D; color: #064E3B; font-weight: 700; }
         .card-shadow { box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05); }
         .prescription-img { transition: transform 0.3s ease; transform-origin: center; }
+
+        /* কাস্টম স্ক্রলবার */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #064E3B; border-radius: 10px; }
     </style>
 </head>
-<body class="text-slate-800">
-
-    <div class="flex min-h-screen">
-        <aside class="w-72 bg-white border-r border-slate-100 hidden md:flex flex-col p-6">
+<body class="text-slate-800 overflow-hidden"> <div class="flex h-screen overflow-hidden"> <aside class="w-72 bg-white border-r border-slate-100 hidden md:flex flex-col p-6 h-full flex-shrink-0">
             <div class="mb-10 px-2 flex items-center gap-3">
                 <div class="w-10 h-10 bg-[#064E3B] rounded-xl flex items-center justify-center text-white font-bold text-xl">P</div>
                 <h1 class="text-xl font-black tracking-tight text-[#064E3B]">PHRMA</h1>
@@ -53,21 +56,21 @@
             </div>
         </aside>
 
-        <main class="flex-1 p-8">
+        <main class="flex-1 p-8 overflow-y-auto h-full">
             <div class="mb-10">
                 <h2 class="text-2xl font-bold text-slate-900">Prescription Requests</h2>
                 <p class="text-slate-400 text-sm">Review and approve customer prescriptions</p>
             </div>
 
-            <div class="bg-white rounded-[32px] border border-slate-100 card-shadow overflow-hidden">
+            <div class="bg-white rounded-[32px] border border-slate-100 card-shadow overflow-hidden mb-10">
                 <div class="overflow-x-auto px-4 py-4">
-                    <table class="w-full text-left border-separate border-spacing-y-2">
-                        <thead>
-                            <div class="relative">
-                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-300 text-sm"></i>
-                        <input type="text" placeholder="Find a Prescriptioms..." class="pl-10 pr-4 py-3 bg-slate-50 border-none rounded-xl text-xs outline-none focus:ring-2 ring-emerald-500/20 w-64">
+                    <div class="relative mb-4 px-2">
+                        <i class="fa-solid fa-magnifying-glass absolute left-5 top-3 text-slate-300 text-sm"></i>
+                        <input type="text" placeholder="Find a Prescriptions..." class="pl-10 pr-4 py-3 bg-slate-50 border-none rounded-xl text-xs outline-none focus:ring-2 ring-emerald-500/20 w-64">
                     </div>
 
+                    <table class="w-full text-left border-separate border-spacing-y-2">
+                        <thead>
                             <tr class="text-slate-400 text-[11px] font-bold uppercase tracking-widest">
                                 <th class="px-6 py-4">ID</th>
                                 <th class="px-6 py-4">Date</th>
@@ -81,7 +84,7 @@
                             </tbody>
                     </table>
                 </div>
-                <div id="no-data" class="py-20 text-center">
+                <div id="no-data" class="py-20 text-center hidden">
                     <i class="fa-solid fa-file-circle-question text-slate-200 text-6xl mb-4"></i>
                     <p class="text-slate-400 font-medium">No prescription requests available.</p>
                 </div>
@@ -132,11 +135,9 @@
     <script>
         let currentRequestId = null;
 
-        // স্ট্যাটাস আপডেট করার ফাংশন (Firebase Integration এর সময় এখানে DB আপডেট লজিক বসবে)
         function updateStatus(newStatus) {
             if(currentRequestId) {
                 alert(`Request ${currentRequestId} has been ${newStatus}`);
-                // এখানে আপনার Firebase আপডেট কোড থাকবে
                 closeModal();
             }
         }
@@ -145,7 +146,6 @@
             document.getElementById('rx-modal').classList.add('hidden');
         }
 
-        // ইমেজ কন্ট্রোল লজিক
         let scale = 1; let rotation = 0;
         function zoomImage(amount) { scale += amount; updateImageStyle(); }
         function rotateImage() { rotation += 90; updateImageStyle(); }
@@ -154,5 +154,6 @@
             img.style.transform = `scale(${scale}) rotate(${rotation}deg)`;
         }
     </script>
+    <script type="module" src="prescriptions.js"></script>
 </body>
 </html>

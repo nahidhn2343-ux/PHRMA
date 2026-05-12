@@ -7,16 +7,19 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="favicon-96x96.png" sizes="96x96" />
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F8FAFC; }
         .sidebar-item.active { background-color: #D9F99D; color: #064E3B; font-weight: 700; }
         .card-shadow { box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05); }
+
+        /* কাস্টম স্ক্রলবার */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #064E3B; border-radius: 10px; }
     </style>
 </head>
-<body class="text-slate-800">
-
-    <div class="flex min-h-screen">
-        <aside class="w-72 bg-white border-r border-slate-100 hidden md:flex flex-col p-6">
+<body class="text-slate-800 overflow-hidden"> <div class="flex h-screen overflow-hidden"> <aside class="w-72 bg-white border-r border-slate-100 hidden md:flex flex-col p-6 h-full flex-shrink-0">
             <div class="mb-10 px-2 flex items-center gap-3">
                 <div class="w-10 h-10 bg-[#064E3B] rounded-xl flex items-center justify-center text-white font-bold text-xl">P</div>
                 <h1 class="text-xl font-black tracking-tight text-[#064E3B]">PHRMA</h1>
@@ -53,7 +56,7 @@
             </div>
         </aside>
 
-        <main class="flex-1 p-8">
+        <main class="flex-1 p-8 overflow-y-auto h-full">
             <div class="flex justify-between items-center mb-10">
                 <div>
                     <h2 class="text-2xl font-bold text-slate-900">Manage Offers</h2>
@@ -65,16 +68,15 @@
                 </button>
             </div>
 
-            <div class="bg-white rounded-[32px] border border-slate-100 card-shadow overflow-hidden">
+            <div class="bg-white rounded-[32px] border border-slate-100 card-shadow overflow-hidden mb-10">
                 <div class="overflow-x-auto px-4 py-4">
-                    <table class="w-full text-left border-separate border-spacing-y-2">
-                        <thead>
-
-                            <div class="relative">
-                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-300 text-sm"></i>
+                    <div class="relative mb-4 px-2">
+                        <i class="fa-solid fa-magnifying-glass absolute left-5 top-3 text-slate-300 text-sm"></i>
                         <input type="text" placeholder="Search Product..." class="pl-10 pr-4 py-3 bg-slate-50 border-none rounded-xl text-xs outline-none focus:ring-2 ring-emerald-500/20 w-64">
                     </div>
-                    
+
+                    <table class="w-full text-left border-separate border-spacing-y-2">
+                        <thead>
                             <tr class="text-slate-400 text-[11px] font-bold uppercase tracking-widest">
                                 <th class="px-6 py-4">Product</th>
                                 <th class="px-6 py-4">Original Price</th>
@@ -87,7 +89,7 @@
                             </tbody>
                     </table>
                 </div>
-                <div id="empty-offers" class="py-20 text-center">
+                <div id="empty-offers" class="py-20 text-center hidden">
                     <i class="fa-solid fa-tags text-slate-200 text-6xl mb-4"></i>
                     <p class="text-slate-400 font-medium">No active offers. Start by adding one!</p>
                 </div>
@@ -158,12 +160,12 @@
             }
         }
 
-        // ফর্ম সাবমিট হ্যান্ডলার (Firebase যোগ করার জন্য প্রস্তুত)
         document.getElementById('offer-form').onsubmit = function(e) {
             e.preventDefault();
             alert('Offer saved successfully!');
             toggleModal('offer-modal');
         };
     </script>
+    <script type="module" src="offers.js"></script>
 </body>
 </html>
