@@ -6,15 +6,17 @@
     <title>Account Access | PHRMA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-<link rel="icon" type="image/png" href="favicon-96x96.png" sizes="96x96" />
-<link rel="icon" type="image/svg+xml" href="favicon.svg" />
-<link rel="shortcut icon" href="favicon.ico" />
-<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
-<meta name="apple-mobile-web-app-title" content="Phrma" />
-<link rel="manifest" href="site.webmanifest" />
+    <link rel="icon" type="image/png" href="favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="shortcut icon" href="favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="Phrma" />
+    <link rel="manifest" href="site.webmanifest" />
     <style>
         .active-tab { border-bottom: 3px solid #0d9488; color: #0d9488; }
         input:focus { box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.1); }
+        /* Popup Animation */
+        #admin-modal { transition: all 0.3s ease-in-out; }
     </style>
 </head>
 <body class="bg-[#F1F5F9] flex items-center justify-center min-h-screen font-['Inter']">
@@ -27,13 +29,11 @@
                 <h2 class="text-5xl font-extrabold leading-tight tracking-tight">Care Beyond <br>Medicine.</h2>
                 <p class="mt-6 text-slate-400 text-lg">Your health data, prescriptions, and orders—secured and accessible in one place.</p>
             </div>
-            
             <div class="absolute -bottom-20 -right-20 w-80 h-80 bg-teal-500/20 rounded-full blur-3xl"></div>
             <div class="z-10 text-sm font-medium opacity-40">©️ 2026 PHRMA Health System</div>
         </div>
 
         <div class="w-full md:w-[58%] p-8 md:p-14 flex flex-col justify-between relative">
-            
             <div class="absolute top-6 right-8">
                 <a href="index.html" class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-500 to-emerald-600 text-white text-xs font-bold rounded-full shadow-lg shadow-teal-200 hover:-translate-y-1 transition-all duration-300">
                     <i class="fa-solid fa-house"></i> Home
@@ -106,9 +106,37 @@
             </div>
 
             <div class="flex justify-end mt-10">
-                <a href="admin-login.html" class="flex items-center gap-2 text-[10px] font-bold text-gray-300 hover:text-teal-600 transition-all uppercase tracking-widest">
+                <button onclick="openAdminModal()" class="flex items-center gap-2 text-[10px] font-bold text-gray-300 hover:text-teal-600 transition-all uppercase tracking-widest">
                     Admin Portal <i class="fa-solid fa-arrow-right"></i>
-                </a>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="admin-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center hidden opacity-0">
+        <div class="bg-white w-full max-w-md p-10 rounded-[2rem] shadow-2xl m-4 relative">
+            <button onclick="closeAdminModal()" class="absolute top-6 right-6 text-gray-400 hover:text-rose-500 transition-colors">
+                <i class="fa-solid fa-circle-xmark text-2xl"></i>
+            </button>
+            
+            <div class="text-center mb-8">
+                <div class="bg-teal-50 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <i class="fa-solid fa-user-shield text-teal-600 text-2xl"></i>
+                </div>
+                <h3 class="text-2xl font-black text-slate-900">Admin Login</h3>
+                <p class="text-sm text-gray-400 mt-1">Authorized personnel only</p>
+            </div>
+
+            <div class="space-y-5">
+                <div>
+                    <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2">Admin Email</label>
+                    <input type="email" id="admin-email" placeholder="admin@phrma.com" class="w-full px-5 py-4 rounded-2xl bg-gray-50 border border-transparent focus:bg-white focus:border-teal-500 outline-none transition-all">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2">Security Key</label>
+                    <input type="password" id="admin-pass" placeholder="••••••••" class="w-full px-5 py-4 rounded-2xl bg-gray-50 border border-transparent focus:bg-white focus:border-teal-500 outline-none transition-all">
+                </div>
+                <button onclick="validateAdmin()" class="w-full bg-slate-900 text-white font-bold py-5 rounded-2xl shadow-xl hover:bg-teal-600 transition-all">Verify & Enter</button>
             </div>
         </div>
     </div>
@@ -137,6 +165,42 @@
                 signupTab.classList.remove('text-gray-400');
                 loginTab.classList.remove('active-tab');
                 loginTab.classList.add('text-gray-400');
+            }
+        }
+
+        // Admin Modal Logic
+        const modal = document.getElementById('admin-modal');
+
+        function openAdminModal() {
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.add('opacity-100');
+            }, 10);
+        }
+
+        function closeAdminModal() {
+            modal.classList.remove('opacity-100');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        function validateAdmin() {
+            const email = document.getElementById('admin-email').value;
+            const pass = document.getElementById('admin-pass').value;
+
+            // এখানে আপনি আপনার পছন্দমতো ইমেল ও পাসওয়ার্ড দিন
+            if (email === "admin@phrma.com" && pass === "admin123") {
+                window.location.href = "admin.html";
+            } else {
+                alert("Invalid Admin Credentials!");
+            }
+        }
+
+        // ক্লোজ বাটন ছাড়া বাইরের কালো অংশে ক্লিক করলে পপ-আপ বন্ধ হবে
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                closeAdminModal();
             }
         }
     </script>

@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PHRMA | Admin Dashboard</title>
+    <title>Users Management | PHRMA Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="icon" type="image/png" href="favicon-96x96.png" sizes="96x96" />
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F8FAFC; }
         .sidebar-item.active { background-color: #D9F99D; color: #064E3B; font-weight: 700; }
@@ -25,33 +24,27 @@
             
             <nav class="flex-1 space-y-2">
                 <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 px-2">Menu</p>
-                
-                <a href="admin.html" class="sidebar-item active flex items-center space-x-3 p-3 rounded-2xl transition-all">
+                <a href="admin.html" class="flex items-center space-x-3 text-slate-500 hover:bg-slate-50 p-3 rounded-2xl transition-all">
                     <i class="fa-solid fa-truck-fast w-5 text-center"></i>
-                    <span class="text-sm">Live Orders</span>
+                    <span class="text-sm font-medium">Live Orders</span>
                 </a>
-
                 <a href="manage-products.html" class="flex items-center space-x-3 text-slate-500 hover:bg-slate-50 p-3 rounded-2xl transition-all">
                     <i class="fa-solid fa-pills w-5 text-center"></i>
                     <span class="text-sm font-medium">Manage Products</span>
                 </a>
-
                 <a href="prescriptions.html" class="flex items-center space-x-3 text-slate-500 hover:bg-slate-50 p-3 rounded-2xl transition-all">
                     <i class="fa-solid fa-file-medical w-5 text-center"></i>
                     <span class="text-sm font-medium">Prescriptions</span>
                 </a>
-
                 <a href="offers.html" class="flex items-center space-x-3 text-slate-500 hover:bg-slate-50 p-3 rounded-2xl transition-all">
                     <i class="fa-solid fa-tags w-5 text-center"></i>
                     <span class="text-sm font-medium">Offers</span>
                 </a>
-
-                <a href="customers.html" class="flex items-center space-x-3 text-slate-500 hover:bg-slate-50 p-3 rounded-2xl transition-all">
+                <a href="customers.html" class="sidebar-item active flex items-center space-x-3 p-3 rounded-2xl transition-all">
                     <i class="fa-solid fa-users w-5 text-center"></i>
-                    <span class="text-sm font-medium">Customers</span>
+                    <span class="text-sm">Users</span>
                 </a>
             </nav>
-
             <div class="mt-auto pt-6 border-t border-slate-50">
                 <a href="login.html" class="flex items-center space-x-3 text-rose-500 font-bold text-sm px-2 hover:opacity-80">
                     <i class="fa-solid fa-right-from-bracket"></i>
@@ -63,62 +56,66 @@
         <main class="flex-1 p-8">
             <div class="flex justify-between items-center mb-10">
                 <div>
-                    <h2 class="text-2xl font-bold text-slate-900">Live Orders Dashboard</h2>
-                    <p class="text-slate-400 text-sm">Welcome back, Admin</p>
-                </div>
-                <div class="flex items-center gap-4">
-                    <div class="relative">
-                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-slate-300 text-sm"></i>
-                        <input type="text" placeholder="Search orders..." class="pl-10 pr-4 py-2.5 bg-white border border-slate-100 rounded-2xl text-sm outline-none focus:ring-2 ring-emerald-500/20 w-64 card-shadow">
-                    </div>
-                    <div class="w-10 h-10 rounded-full bg-emerald-100 border-2 border-white card-shadow overflow-hidden">
-                        <img src="https://ui-avatars.com/api/?name=Admin&background=064E3B&color=fff" alt="Profile">
-                    </div>
+                    <h2 class="text-2xl font-bold text-slate-900">User Management</h2>
+                    <p class="text-slate-400 text-sm">Monitor and manage all registered users</p>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-                <div class="bg-[#064E3B] p-7 rounded-[32px] text-white relative overflow-hidden card-shadow">
-                    <div class="relative z-10">
-                        <p class="text-emerald-200/70 text-xs font-bold uppercase tracking-wider">Total Orders</p>
-                        <h2 id="stat-total" class="text-4xl font-bold mt-2">0</h2>
+                <div class="bg-white p-8 rounded-[32px] border border-slate-100 card-shadow flex items-center gap-6">
+                    <div class="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center text-[#064E3B] text-2xl">
+                        <i class="fa-solid fa-users"></i>
                     </div>
-                    <i class="fa-solid fa-box-open absolute -right-4 -bottom-4 text-white/10 text-8xl"></i>
-                </div>
-                <div class="bg-white p-7 rounded-[32px] border border-slate-100 card-shadow">
-                    <p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Completed</p>
-                    <h2 id="stat-completed" class="text-4xl font-bold mt-2 text-emerald-600">0</h2>
-                </div>
-                <div class="bg-white p-7 rounded-[32px] border border-slate-100 card-shadow">
-                    <p class="text-slate-400 text-xs font-bold uppercase tracking-wider">In Process</p>
-                    <h2 id="stat-pending" class="text-4xl font-bold mt-2 text-amber-500">0</h2>
+                    <div>
+                        <p class="text-slate-400 text-[10px] font-black uppercase tracking-widest">Total Registered Users</p>
+                        <h3 id="total-users-count" class="text-4xl font-black text-slate-900 mt-1">0</h3>
+                    </div>
                 </div>
             </div>
 
             <div class="bg-white rounded-[32px] border border-slate-100 card-shadow overflow-hidden">
                 <div class="px-8 py-6 border-b border-slate-50 flex justify-between items-center">
-                    <h3 class="font-bold text-lg">Recent Transactions</h3>
-                    <button class="text-emerald-600 text-xs font-bold hover:underline">View All</button>
+                    <h3 class="font-bold text-lg text-slate-800">All Customers</h3>
+                    <div class="relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-300 text-sm"></i>
+                        <input type="text" placeholder="Search by name..." class="pl-10 pr-4 py-2 bg-slate-50 border-none rounded-xl text-xs outline-none focus:ring-2 ring-emerald-500/20 w-64">
+                    </div>
                 </div>
+                
                 <div class="overflow-x-auto px-4 pb-4">
-                    <table class="w-full text-left">
+                    <table class="w-full text-left border-separate border-spacing-y-2">
                         <thead>
                             <tr class="text-slate-400 text-[11px] font-bold uppercase tracking-widest">
-                                <th class="px-4 py-5">Order ID</th>
-                                <th class="px-4 py-5">Customer</th>
-                                <th class="px-4 py-5">Location</th>
-                                <th class="px-4 py-5">Status</th>
-                                <th class="px-4 py-5 text-right">Action</th>
+                                <th class="px-6 py-4">User Details</th>
+                                <th class="px-6 py-4">Joined Date</th>
+                                <th class="px-6 py-4">Role</th>
+                                <th class="px-6 py-4">Status</th>
+                                <th class="px-6 py-4 text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="order-rows" class="divide-y divide-slate-50 text-sm">
+                        <tbody id="user-list-body" class="text-sm">
                             </tbody>
                     </table>
+
+                    <div id="no-users" class="py-20 text-center">
+                        <i class="fa-solid fa-user-slash text-slate-100 text-6xl mb-4"></i>
+                        <p class="text-slate-400 font-medium">No users found in the database.</p>
+                    </div>
                 </div>
             </div>
         </main>
     </div>
 
-    <script type="module" src="admin.js"></script>
+    <script>
+        // আপনার Firebase Firestore লজিক এখানে যুক্ত হবে
+        // উদাহরণ: db.collection('users').onSnapshot(snapshot => { ... });
+        
+        function blockUser(userId) {
+            if(confirm("Are you sure you want to block this user?")) {
+                console.log("Blocking user:", userId);
+                // Firebase logic to update user status to 'Blocked'
+            }
+        }
+    </script>
 </body>
 </html>
