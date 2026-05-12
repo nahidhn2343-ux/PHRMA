@@ -75,18 +75,18 @@ productForm.addEventListener('submit', async (e) => {
         if (productId) {
             // আইডি থাকলে আপডেট হবে
             await updateDoc(doc(db, "products", productId), productData);
-            alert("প্রোডাক্ট আপডেট সফল হয়েছে!");
+            alert("Product update successful!");
         } else {
             // আইডি না থাকলে নতুন অ্যাড হবে
             productData.createdAt = new Date();
             await addDoc(collection(db, "products"), productData);
-            alert("নতুন প্রোডাক্ট সেভ হয়েছে!");
+            alert("New product saved!");
         }
         productForm.reset();
         toggleModal('product-modal'); // HTML এ থাকা ফাংশন
     } catch (error) {
         console.error("Error:", error);
-        alert("কাজটি সম্পন্ন করা যায়নি!");
+        alert("The task could not be completed!");
     }
 });
 
@@ -114,7 +114,7 @@ window.editProduct = async (id) => {
 
 // ৪. ডিলিট ফাংশন
 window.deleteProduct = async (id) => {
-    if(confirm("আপনি কি নিশ্চিতভাবে এটি ডিলিট করতে চান?")) {
+    if(confirm("Are you sure you want to delete this?")) {
         await deleteDoc(doc(db, "products", id));
     }
 };
