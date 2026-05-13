@@ -2,7 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import { getFirestore, collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { getAuth, GoogleAuthProvider, FacebookAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-// ১. Firebase Configuration
+// ১. Firebase Configuration (আপনার আগেরটাই আছে)
 const firebaseConfig = {
     apiKey: "AIzaSyDYzJkinF_J4ff9T5Bi9hESxlo_ue8Szs8",
     authDomain: "phrma-eb265.firebaseapp.com",
@@ -16,7 +16,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-// ২. Authentication Logic (Sign Up, Login)
+// ২. Authentication Logic (অপরিবর্তিত)
 window.handleSignUp = async () => {
     const fname = document.getElementById('signup-fname').value;
     const lname = document.getElementById('signup-lname').value;
@@ -67,19 +67,29 @@ async function syncWithFirebase() {
                 img: data.image || data.imageUrl || "https://via.placeholder.com/200",
                 isFamous: data.isFamous ?? true,
                 category: data.category || "Medicine",
-                about: data.about || ""
+                about: data.about || "No description available."
             });
         });
         allProducts = fbData;
-        updateUI();
+        updateUI(allProducts); // শুরুতে সব প্রোডাক্ট দেখাবে
     } catch (e) { console.error("Data Load Error:", e); }
 }
 
-function updateUI() {
-    if (famousGrid) renderUI(famousGrid, allProducts.filter(p => p.isFamous).slice(0, 4));
-    if (shopGrid) renderUI(shopGrid, allProducts);
+// UI আপডেট ফাংশন (এখানে ২০টি প্রোডাক্টের লিমিট দেওয়া হয়েছে)
+function updateUI(productsToShow) {
+    // হোম পেজের জন্য ২০টি ফেমাস প্রোডাক্ট ফিল্টার
+    if (famousGrid) {
+        const famousProducts = productsToShow.filter(p => p.isFamous).slice(0, 20);
+        renderUI(famousGrid, famousProducts);
+    }
+    if (shopGrid) renderUI(shopGrid, productsToShow);
 }
 
+
+
+
+
+// ৪. Render UI Function (অপরিবর্তিত লজিক)
 function renderUI(container, productList) {
     if (!container) return;
     container.innerHTML = productList.map(product => `
@@ -94,7 +104,20 @@ function renderUI(container, productList) {
     `).join('');
 }
 
-// ৪. Product Detail Modal (Pop-up)
+// ৫. Search Logic (নাম বা টাইপ অনুযায়ী ফিল্টারিং)
+const searchInput = document.getElementById('mainSearch');
+if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const filtered = allProducts.filter(product => {
+            return product.name.toLowerCase().includes(searchTerm) || 
+                   product.category.toLowerCase().includes(searchTerm);
+        });
+        updateUI(filtered); // সার্চ রেজাল্ট অনুযায়ী UI আপডেট হবে
+    });
+}
+
+// ৬. Product Detail Modal (Pop-up লজিক)
 window.viewProduct = async (id) => {
     try {
         const docRef = doc(db, "products", id);
@@ -106,6 +129,8 @@ window.viewProduct = async (id) => {
             document.getElementById('modal-product-name').innerText = product.name;
             document.getElementById('modal-product-cat').innerText = product.category || "Medicine";
             document.getElementById('modal-product-price').innerText = product.price;
+            
+            // ডেসক্রিপশন অংশটি আপডেট
             document.getElementById('modal-product-about').innerText = product.about || "No description available.";
             
             document.getElementById('modal-add-to-cart').onclick = (e) => {
@@ -117,7 +142,7 @@ window.viewProduct = async (id) => {
             const modal = document.getElementById('product-detail-modal');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
-            document.body.style.overflow = 'hidden';
+            document.body.style.overflow = 'hidden'; // পপআপ চলাকালীন পেজ স্ক্রল বন্ধ থাকবে
         }
     } catch (error) { console.error("Modal Error:", error); }
 };
@@ -129,7 +154,7 @@ window.closeProductModal = () => {
     document.body.style.overflow = 'auto';
 };
 
-// ৫. Cart Logic
+// ৭. Cart Logic (অপরিবর্তিত)
 window.addToCart = (productId) => {
     const product = allProducts.find(p => p.id === productId);
     if(!product) return;
@@ -149,7 +174,7 @@ function updateCartBadge() {
     }
 }
 
-// ৬. Responsive Side Menu Logic (FIXED)
+// ৮. Responsive Side Menu Logic
 document.addEventListener('DOMContentLoaded', () => {
     const menuBtn = document.getElementById('menu-btn');
     const closeBtn = document.getElementById('close-btn');
@@ -159,7 +184,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (menuBtn && sideMenu && sideContent) {
         menuBtn.addEventListener('click', () => {
             sideMenu.classList.remove('hidden');
-            // প্যানেল আসার অ্যানিমেশন
             setTimeout(() => {
                 sideMenu.classList.add('opacity-100');
                 sideContent.classList.remove('translate-x-full');
@@ -181,8 +205,39 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// ৭. Page Initial Load
+// ৯. Page Initial Load
 window.onload = () => {
     syncWithFirebase();
     updateCartBadge();
 };
+
+
+
+// শপ পেজের জন্য সার্চ ও ফিল্টার লজিক
+const shopSearchInput = document.getElementById('shopSearch');
+if (shopSearchInput) {
+    shopSearchInput.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const filtered = allProducts.filter(p => 
+            p.name.toLowerCase().includes(searchTerm) || 
+            p.category.toLowerCase().includes(searchTerm)
+        );
+        updateResultsUI(filtered);
+    });
+}
+
+window.filterByCategory = (category) => {
+    const filtered = (category === "All Products") ? 
+        allProducts : allProducts.filter(p => p.category === category);
+    updateResultsUI(filtered);
+};
+
+function updateResultsUI(products) {
+    const noResult = document.getElementById('no-results');
+    if (products.length === 0) {
+        noResult.classList.remove('hidden');
+    } else {
+        noResult.classList.add('hidden');
+    }
+    renderUI(shopGrid, products);
+}

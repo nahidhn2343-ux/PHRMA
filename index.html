@@ -13,6 +13,10 @@
         body { font-family: 'Inter', sans-serif; }
         .font-jakarta { font-family: 'Plus Jakarta Sans', sans-serif; }
         .modal-animate { transition: all 0.3s ease-in-out; }
+        
+        /* কাস্টম স্ক্রলবার পপআপের জন্য */
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #0d9488; border-radius: 10px; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-900 overflow-x-hidden">
@@ -78,7 +82,7 @@
 
                 <div class="mt-6 lg:mt-10 w-full max-w-md mx-auto lg:mx-0">
                     <div class="flex bg-gray-100 p-2 rounded-2xl border-2 border-transparent focus-within:border-teal-500 focus-within:bg-white transition-all shadow-sm">
-                        <input type="text" id="mainSearch" placeholder="Search medicines..." class="flex-1 bg-transparent px-4 outline-none text-gray-700 text-sm md:text-base">
+                        <input type="text" id="mainSearch" placeholder="Search by name or category..." class="flex-1 bg-transparent px-4 outline-none text-gray-700 text-sm md:text-base">
                         <button class="bg-teal-600 text-white px-5 py-2.5 rounded-xl font-bold hover:bg-teal-700 transition">
                             <i class="fa-solid fa-magnifying-glass"></i>
                         </button>
@@ -102,34 +106,43 @@
             <a href="shop.html" class="text-teal-600 font-bold hover:underline text-sm md:text-base">View All Shop →</a>
         </div>
         
-        <div id="famous-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
+        <div id="famous-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6">
             </div>
     </section>
 
-    <div id="product-detail-modal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4">
+    <div id="product-detail-modal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 md:p-6">
         <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeProductModal()"></div>
+        
         <div class="bg-white w-full max-w-4xl rounded-[2.5rem] shadow-2xl relative overflow-hidden flex flex-col md:flex-row z-10 max-h-[90vh]">
-            <button onclick="closeProductModal()" class="absolute top-6 right-6 text-gray-400 hover:text-rose-500 z-20">
+            
+            <button onclick="closeProductModal()" class="absolute top-4 right-4 text-gray-400 hover:text-rose-500 z-30 bg-white rounded-full p-1 shadow-sm">
                 <i class="fa-solid fa-circle-xmark text-3xl"></i>
             </button>
 
-            <div class="w-full md:w-1/2 bg-gray-50 flex items-center justify-center p-8">
-                <img id="modal-product-img" src="" alt="" class="max-h-80 w-auto object-contain drop-shadow-2xl">
+            <div class="w-full md:w-1/2 bg-gray-50 flex items-center justify-center p-6 md:p-12 flex-shrink-0">
+                <img id="modal-product-img" src="" alt="" class="max-h-60 md:max-h-80 w-auto object-contain drop-shadow-2xl">
             </div>
 
-            <div class="w-full md:w-1/2 p-10 flex flex-col justify-center">
-                <span id="modal-product-cat" class="text-teal-600 font-black text-xs uppercase tracking-widest mb-2">Category</span>
-                <h3 id="modal-product-name" class="text-3xl font-black text-slate-900 mb-4 font-jakarta">Product Name</h3>
-                <p id="modal-product-about" class="text-slate-500 leading-relaxed mb-8 text-sm">Product description goes here...</p>
-                
-                <div class="flex items-center justify-between mb-8">
-                    <div class="text-3xl font-black text-teal-600">৳ <span id="modal-product-price">0.00</span></div>
-                    <div class="text-xs text-emerald-600 font-bold bg-emerald-50 px-3 py-1 rounded-full">In Stock</div>
+            <div class="w-full md:w-1/2 flex flex-col flex-1 overflow-hidden">
+                <div class="p-6 md:p-10 overflow-y-auto flex-1 custom-scrollbar">
+                    <span id="modal-product-cat" class="text-teal-600 font-black text-xs uppercase tracking-widest mb-2 inline-block">Category</span>
+                    <h3 id="modal-product-name" class="text-2xl md:text-3xl font-black text-slate-900 mb-4 font-jakarta">Product Name</h3>
+                    
+                    <div id="modal-product-about" class="text-slate-500 leading-relaxed text-sm space-y-4">
+                        Product description goes here...
+                    </div>
                 </div>
 
-                <button id="modal-add-to-cart" class="w-full bg-[#064E3B] text-white py-5 rounded-2xl font-bold shadow-xl shadow-teal-100 hover:bg-emerald-800 transition-all transform active:scale-95 flex items-center justify-center gap-3">
-                    <i class="fa-solid fa-cart-plus"></i> Add to Cart
-                </button>
+                <div class="p-6 md:p-10 border-t border-gray-50 bg-white flex-shrink-0">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="text-3xl font-black text-teal-600">৳ <span id="modal-product-price">0.00</span></div>
+                        <div class="text-xs text-emerald-600 font-bold bg-emerald-50 px-3 py-1 rounded-full italic">In Stock</div>
+                    </div>
+
+                    <button id="modal-add-to-cart" class="w-full bg-[#064E3B] text-white py-4 md:py-5 rounded-2xl font-bold shadow-xl shadow-teal-100 hover:bg-emerald-800 transition-all transform active:scale-95 flex items-center justify-center gap-3">
+                        <i class="fa-solid fa-cart-plus"></i> Add to Cart
+                    </button>
+                </div>
             </div>
         </div>
     </div>
