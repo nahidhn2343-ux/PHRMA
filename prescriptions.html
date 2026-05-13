@@ -14,13 +14,14 @@
         .card-shadow { box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05); }
         .prescription-img { transition: transform 0.3s ease; transform-origin: center; }
 
-        /* কাস্টম স্ক্রলবার */
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #064E3B; border-radius: 10px; }
     </style>
 </head>
-<body class="text-slate-800 overflow-hidden"> <div class="flex h-screen overflow-hidden"> <aside class="w-72 bg-white border-r border-slate-100 hidden md:flex flex-col p-6 h-full flex-shrink-0">
+<body class="text-slate-800 overflow-hidden"> 
+    <div class="flex h-screen overflow-hidden"> 
+        <aside class="w-72 bg-white border-r border-slate-100 hidden md:flex flex-col p-6 h-full flex-shrink-0">
             <div class="mb-10 px-2 flex items-center gap-3">
                 <div class="w-10 h-10 bg-[#064E3B] rounded-xl flex items-center justify-center text-white font-bold text-xl">P</div>
                 <h1 class="text-xl font-black tracking-tight text-[#064E3B]">PHRMA</h1>
@@ -48,13 +49,15 @@
                     <span class="text-sm font-medium">Customers</span>
                 </a>
             </nav>
-             <div class="mt-auto pt-6 border-t border-slate-50">
+            <div class="mt-auto pt-6 border-t border-slate-50">
                 <a href="login.html" class="flex items-center space-x-3 text-rose-500 font-bold text-sm px-2 hover:opacity-80">
                     <i class="fa-solid fa-right-from-bracket"></i>
                     <span>Logout</span>
                 </a>
             </div>
         </aside>
+
+        
 
         <main class="flex-1 p-8 overflow-y-auto h-full">
             <div class="mb-10">
@@ -64,11 +67,6 @@
 
             <div class="bg-white rounded-[32px] border border-slate-100 card-shadow overflow-hidden mb-10">
                 <div class="overflow-x-auto px-4 py-4">
-                    <div class="relative mb-4 px-2">
-                        <i class="fa-solid fa-magnifying-glass absolute left-5 top-3 text-slate-300 text-sm"></i>
-                        <input type="text" placeholder="Find a Prescriptions..." class="pl-10 pr-4 py-3 bg-slate-50 border-none rounded-xl text-xs outline-none focus:ring-2 ring-emerald-500/20 w-64">
-                    </div>
-
                     <table class="w-full text-left border-separate border-spacing-y-2">
                         <thead>
                             <tr class="text-slate-400 text-[11px] font-bold uppercase tracking-widest">
@@ -94,7 +92,6 @@
 
     <div id="rx-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center hidden p-4 transition-all duration-300">
         <div class="bg-white w-full max-w-5xl rounded-[2.5rem] shadow-2xl relative overflow-hidden flex flex-col max-h-[90vh]">
-            
             <div class="px-10 py-6 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
                 <h3 class="text-xl font-black text-slate-900">Review Prescription</h3>
                 <button onclick="closeModal()" class="text-slate-400 hover:text-rose-500 transition-all">
@@ -126,26 +123,109 @@
             </div>
 
             <div class="p-8 border-t border-slate-50 flex gap-4">
-                <button onclick="updateStatus('Rejected')" class="flex-1 bg-rose-50 text-rose-600 font-bold py-4 rounded-2xl hover:bg-rose-600 hover:text-white transition-all">Reject Request</button>
-                <button onclick="updateStatus('Confirmed')" class="flex-[2] bg-[#064E3B] text-white font-bold py-4 rounded-2xl shadow-xl hover:bg-emerald-800 transition-all">Approve & Send Confirmation</button>
+                <button onclick="updateReqStatus('Rejected')" class="flex-1 bg-rose-50 text-rose-600 font-bold py-4 rounded-2xl hover:bg-rose-600 hover:text-white transition-all">Reject Request</button>
+                <button onclick="updateReqStatus('Confirmed')" class="flex-[2] bg-[#064E3B] text-white font-bold py-4 rounded-2xl shadow-xl hover:bg-emerald-800 transition-all">Approve & Send Confirmation</button>
             </div>
         </div>
     </div>
 
-    <script>
-        let currentRequestId = null;
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        function updateStatus(newStatus) {
-            if(currentRequestId) {
-                alert(`Request ${currentRequestId} has been ${newStatus}`);
+        const firebaseConfig = {
+            apiKey: "AIzaSyDYzJkinF_J4ff9T5Bi9hESxlo_ue8Szs8",
+            authDomain: "phrma-eb265.firebaseapp.com",
+            projectId: "phrma-eb265",
+            storageBucket: "phrma-eb265.firebasestorage.app",
+            messagingSenderId: "79240146779",
+            appId: "1:79240146779:web:d01a63247566aeb8ea347e"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const listContainer = document.getElementById('prescription-list');
+        const noData = document.getElementById('no-data');
+
+        // ডাটা লোড করা
+        onSnapshot(collection(db, "prescriptions"), (snapshot) => {
+            listContainer.innerHTML = "";
+            if (snapshot.empty) {
+                noData.classList.remove('hidden');
+            } else {
+                noData.classList.add('hidden');
+                snapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    const id = docSnap.id;
+                    const date = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString() : "N/A";
+
+                    const row = `
+                        <tr class="bg-white border border-slate-50 rounded-2xl group hover:bg-slate-50 transition-all">
+                            <td class="px-6 py-5 font-mono text-[10px] text-slate-400">#${id.slice(0, 8)}</td>
+                            <td class="px-6 py-5 font-medium text-slate-600">${date}</td>
+                            <td class="px-6 py-5 font-bold text-slate-900">${data.customerName || 'No Name'}</td>
+                            <td class="px-6 py-5 text-slate-600">${data.phone || 'No Phone'}</td>
+                            <td class="px-6 py-5">
+                                <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase ${data.status === 'Pending' ? 'bg-orange-100 text-orange-600' : data.status === 'Confirmed' ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600'}">
+                                    ${data.status || 'Pending'}
+                                </span>
+                            </td>
+                            <td class="px-6 py-5 text-right space-x-2">
+                                <button onclick="openModal('${id}')" class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 hover:bg-[#064E3B] hover:text-white transition-all">
+                                    <i class="fa-solid fa-eye text-xs"></i>
+                                </button>
+                                <button onclick="deleteReq('${id}')" class="w-10 h-10 rounded-xl bg-rose-50 text-rose-400 hover:bg-rose-500 hover:text-white transition-all">
+                                    <i class="fa-solid fa-trash-can text-xs"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                    listContainer.innerHTML += row;
+                });
+            }
+        }, (error) => {
+            console.error("Firestore Error: ", error);
+        });
+
+        // ফাংশনগুলো window অবজেক্টে সেট করা যাতে HTML থেকে কল করা যায়
+        window.openModal = async (id) => {
+            window.currentRequestId = id;
+            const docSnap = await getDoc(doc(db, "prescriptions", id));
+
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                document.getElementById('modal-user-info').innerHTML = `
+                    <div><label class="text-[10px] text-slate-400 font-bold uppercase">Name</label><p class="font-bold">${data.customerName || 'N/A'}</p></div>
+                    <div><label class="text-[10px] text-slate-400 font-bold uppercase">Phone</label><p class="font-bold">${data.phone || 'N/A'}</p></div>
+                    <div><label class="text-[10px] text-slate-400 font-bold uppercase">Age</label><p class="font-bold">${data.age || 'N/A'}</p></div>
+                    <div><label class="text-[10px] text-slate-400 font-bold uppercase">Email</label><p class="font-bold">${data.email || 'N/A'}</p></div>
+                `;
+                document.getElementById('modal-address').innerText = data.address || data.deliveryAddress || "No address provided";
+                document.getElementById('rx-image').src = data.image || data.imageUrl || "";
+                document.getElementById('rx-modal').classList.remove('hidden');
+            }
+        };
+
+        window.updateReqStatus = async (status) => {
+            if (window.currentRequestId) {
+                await updateDoc(doc(db, "prescriptions", window.currentRequestId), { status: status });
+                alert(`Request ${status} successfully!`);
                 closeModal();
             }
-        }
+        };
 
-        function closeModal() {
+        window.deleteReq = async (id) => {
+            if(confirm("Are you sure?")) await deleteDoc(doc(db, "prescriptions", id));
+        };
+
+        window.closeModal = () => {
             document.getElementById('rx-modal').classList.add('hidden');
-        }
+        };
+    </script>
 
+    <script>
+        // ইমেজ জুম ও রোটেট লজিক (অপরিবর্তিত)
         let scale = 1; let rotation = 0;
         function zoomImage(amount) { scale += amount; updateImageStyle(); }
         function rotateImage() { rotation += 90; updateImageStyle(); }
@@ -154,6 +234,5 @@
             img.style.transform = `scale(${scale}) rotate(${rotation}deg)`;
         }
     </script>
-    <script type="module" src="prescriptions.js"></script>
 </body>
 </html>

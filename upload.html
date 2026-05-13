@@ -211,6 +211,95 @@
         </div>
     </footer>
 
+    <script type="module">
+    // প্রয়োজনীয় ফাংশনগুলো ইম্পোর্ট করা
+    import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    // Firebase Config (আপনার কনফিগারেশন ঠিক আছে)
+    const firebaseConfig = {
+        apiKey: "AIzaSyDYzJkinF_J4ff9T5Bi9hESxlo_ue8Szs8",
+        authDomain: "phrma-eb265.firebaseapp.com",
+        projectId: "phrma-eb265",
+        storageBucket: "phrma-eb265.firebasestorage.app",
+        messagingSenderId: "79240146779",
+        appId: "1:79240146779:web:d01a63247566aeb8ea347e"
+    };
+
+    // ডুপ্লিকেট অ্যাপ এরর এড়ানোর সঠিক লজিক
+    const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+    const db = getFirestore(app);
+
+    const prescriptionForm = document.getElementById('prescriptionForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const fileInput = document.getElementById('p_file');
+
+    // ১. ছবিকে Base64 এ রূপান্তর করার ফাংশন
+    const convertToBase64 = (file) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = (error) => reject(error);
+        });
+    };
+
+    // ২. ফর্ম সাবমিট হ্যান্ডলার
+    prescriptionForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
+
+        const file = fileInput.files[0];
+
+        // ১ মেগাবাইটের বেশি ছবি হলে আটকে দিবে
+        if (file && file.size > 1048576) {
+            alert("File too large! Please upload a file under 1MB.");
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'Confirm Upload';
+            return;
+        }
+
+        try {
+            let base64String = file ? await convertToBase64(file) : "";
+
+            // Firestore-এ 'prescriptions' নামে নতুন কালেকশনে ডাটা পাঠানো
+            await addDoc(collection(db, "prescriptions"), {
+                customerName: document.getElementById('p_name').value,
+                age: document.getElementById('p_age').value,
+                email: document.getElementById('p_email').value,
+                phone: document.getElementById('p_phone').value,
+                address: document.getElementById('p_address').value,
+                image: base64String, // ছবি টেক্সট হিসেবে যাবে
+                status: "Pending", // এডমিন পরে এটি আপডেট করবে
+                createdAt: new Date()
+            });
+
+            alert("Prescription uploaded successfully!");
+            prescriptionForm.reset();
+            
+        } catch (error) {
+            console.error("Error adding document: ", error);
+            alert("Failed to upload. Check Console.");
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Confirm Upload';
+        }
+    });
+
+    // মোবাইল মেনু লজিক (আপনার রিকোয়েস্ট অনুযায়ী)
+    document.getElementById('menu-btn')?.addEventListener('click', () => {
+        document.getElementById('side-menu').classList.remove('hidden');
+    });
+    document.getElementById('close-btn')?.addEventListener('click', () => {
+        document.getElementById('side-menu').classList.add('hidden');
+    });
+</script>
+
+    
+
     <script type="module" src="script.js"></script>
+    <script type="module" src="manage-products.js"></script>
 </body>
 </html>

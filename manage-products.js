@@ -1,4 +1,4 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 // Firebase Config
@@ -11,20 +11,21 @@ const firebaseConfig = {
     appId: "1:79240146779:web:d01a63247566aeb8ea347e"
 };
 
-const app = initializeApp(firebaseConfig);
+// অ্যাপ চেক করে ইনিশিয়ালাইজ করা (ডুপ্লিকেট এরর এড়াতে)
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 const db = getFirestore(app);
 
 const productForm = document.getElementById('product-form');
 const productList = document.getElementById('product-list');
 const emptyState = document.getElementById('empty-state');
 
-// ১. ডাটা রেন্ডার করা (Edit বাটনসহ)
+// ১. ডাটা রেন্ডার করা (আপনার স্টাইল অনুযায়ী)
 onSnapshot(collection(db, "products"), (snapshot) => {
     productList.innerHTML = "";
     if (snapshot.empty) {
-        emptyState.classList.remove('hidden');
+        emptyState?.classList.remove('hidden');
     } else {
-        emptyState.classList.add('hidden');
+        emptyState?.classList.add('hidden');
         snapshot.forEach((docSnap) => {
             const product = docSnap.data();
             const id = docSnap.id;
@@ -57,7 +58,7 @@ onSnapshot(collection(db, "products"), (snapshot) => {
     }
 });
 
-// ২. প্রোডাক্ট সেভ অথবা আপডেট করা
+// ২. প্রোডাক্ট সেভ অথবা আপডেট করা (about ফিল্ডসহ)
 productForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const productId = document.getElementById('p-id').value;
@@ -66,27 +67,27 @@ productForm.addEventListener('submit', async (e) => {
         name: document.getElementById('p-name').value,
         price: document.getElementById('p-price').value,
         category: document.getElementById('p-cat').value,
-        about: document.getElementById('p-about').value,
+        about: document.getElementById('p-about').value, // ডেসক্রিপশন ফিল্ড
         image: document.getElementById('p-image').value,
         updatedAt: new Date()
     };
 
     try {
         if (productId) {
-            // আইডি থাকলে আপডেট হবে
+            // আপডেট লজিক
             await updateDoc(doc(db, "products", productId), productData);
-            alert("Product update successful!");
+            alert("Product updated successfully!");
         } else {
-            // আইডি না থাকলে নতুন অ্যাড হবে
+            // নতুন ডাটা অ্যাড লজিক
             productData.createdAt = new Date();
             await addDoc(collection(db, "products"), productData);
-            alert("New product saved!");
+            alert("New product added to Firestore!");
         }
         productForm.reset();
-        toggleModal('product-modal'); // HTML এ থাকা ফাংশন
+        if(typeof toggleModal === 'function') toggleModal('product-modal'); 
     } catch (error) {
-        console.error("Error:", error);
-        alert("The task could not be completed!");
+        console.error("Error saving data:", error);
+        alert("Action failed! Check console.");
     }
 });
 
@@ -102,10 +103,10 @@ window.editProduct = async (id) => {
             document.getElementById('p-name').value = data.name;
             document.getElementById('p-price').value = data.price;
             document.getElementById('p-cat').value = data.category;
-            document.getElementById('p-about').value = data.about;
+            document.getElementById('p-about').value = data.about || ""; // about ফিল্ড পপুলেট করা
             document.getElementById('p-image').value = data.image;
             
-            toggleModal('product-modal', true); // Modal open in edit mode
+            if(typeof toggleModal === 'function') toggleModal('product-modal', true);
         }
     } catch (error) {
         console.error("Error fetching product:", error);
@@ -114,7 +115,11 @@ window.editProduct = async (id) => {
 
 // ৪. ডিলিট ফাংশন
 window.deleteProduct = async (id) => {
-    if(confirm("Are you sure you want to delete this?")) {
-        await deleteDoc(doc(db, "products", id));
+    if(confirm("Are you sure you want to delete this product?")) {
+        try {
+            await deleteDoc(doc(db, "products", id));
+        } catch (error) {
+            alert("Error deleting product.");
+        }
     }
 };
