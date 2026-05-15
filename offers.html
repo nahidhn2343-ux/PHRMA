@@ -19,7 +19,9 @@
         ::-webkit-scrollbar-thumb { background: #064E3B; border-radius: 10px; }
     </style>
 </head>
-<body class="text-slate-800 overflow-hidden"> <div class="flex h-screen overflow-hidden"> <aside class="w-72 bg-white border-r border-slate-100 hidden md:flex flex-col p-6 h-full flex-shrink-0">
+<body class="text-slate-800 overflow-hidden"> 
+    <div class="flex h-screen overflow-hidden"> 
+        <aside class="w-72 bg-white border-r border-slate-100 hidden md:flex flex-col p-6 h-full flex-shrink-0">
             <div class="mb-10 px-2 flex items-center gap-3">
                 <div class="w-10 h-10 bg-[#064E3B] rounded-xl flex items-center justify-center text-white font-bold text-xl">P</div>
                 <h1 class="text-xl font-black tracking-tight text-[#064E3B]">PHRMA</h1>
@@ -109,10 +111,10 @@
             </div>
 
             <form id="offer-form" class="space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <input type="hidden" id="offer-id"> <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="col-span-2">
                         <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2">Product Name</label>
-                        <input type="text" id="off-p-name" placeholder="Search product..." class="w-full px-5 py-4 rounded-2xl bg-gray-50 border border-transparent focus:bg-white focus:border-emerald-500 outline-none transition-all" required>
+                        <input type="text" id="off-p-name" placeholder="Enter product name..." class="w-full px-5 py-4 rounded-2xl bg-gray-50 border border-transparent focus:bg-white focus:border-emerald-500 outline-none transition-all" required>
                     </div>
                     <div>
                         <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2">Original Price (৳)</label>
@@ -136,11 +138,133 @@
 
                 <div class="flex gap-4 pt-4">
                     <button type="button" onclick="toggleModal('offer-modal')" class="flex-1 py-4 rounded-2xl font-bold text-slate-500 hover:bg-slate-50 transition-all text-sm">Cancel</button>
-                    <button type="submit" class="flex-1 bg-[#064E3B] text-white font-bold py-4 rounded-2xl shadow-xl hover:bg-emerald-800 transition-all text-sm">Save Offer</button>
+                    <button type="submit" id="save-btn" class="flex-1 bg-[#064E3B] text-white font-bold py-4 rounded-2xl shadow-xl hover:bg-emerald-800 transition-all text-sm">Save Offer</button>
                 </div>
             </form>
         </div>
     </div>
+
+    <script type="module">
+        import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, doc, deleteDoc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // Firebase Config (আপনার প্রজেক্টের ডাটা)
+        const firebaseConfig = {
+            apiKey: "AIzaSyDYzJkinF_J4ff9T5Bi9hESxlo_ue8Szs8",
+            authDomain: "phrma-eb265.firebaseapp.com",
+            projectId: "phrma-eb265",
+            storageBucket: "phrma-eb265.firebasestorage.app",
+            messagingSenderId: "79240146779",
+            appId: "1:79240146779:web:d01a63247566aeb8ea347e"
+        };
+
+        const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+        const db = getFirestore(app);
+
+        const offerForm = document.getElementById('offer-form');
+        const offerList = document.getElementById('offer-list');
+        const emptyState = document.getElementById('empty-offers');
+
+        // ১. ডাটা রিড করা (Real-time)
+        onSnapshot(collection(db, "offers"), (snapshot) => {
+            offerList.innerHTML = "";
+            if (snapshot.empty) {
+                emptyState.classList.remove('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+                snapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    const id = docSnap.id;
+
+                    const row = `
+                        <tr class="bg-white border border-slate-50 rounded-2xl group hover:bg-slate-50 transition-all">
+                            <td class="px-6 py-5">
+                                <div class="flex items-center gap-4">
+                                    <img src="${data.image}" class="w-10 h-10 rounded-xl object-cover bg-slate-100" onerror="this.src='https://via.placeholder.com/40'">
+                                    <span class="font-bold text-slate-700">${data.name}</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-5 font-bold text-slate-400 line-through">৳ ${data.originalPrice}</td>
+                            <td class="px-6 py-5 font-black text-rose-500">${data.discount}% OFF</td>
+                            <td class="px-6 py-5">
+                                <span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-[10px] font-black uppercase">Active</span>
+                            </td>
+                            <td class="px-6 py-5 text-right space-x-2">
+                                <button onclick="editOffer('${id}')" class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all">
+                                    <i class="fa-solid fa-pen-to-square text-xs"></i>
+                                </button>
+                                <button onclick="deleteOffer('${id}')" class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white transition-all">
+                                    <i class="fa-solid fa-trash text-xs"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                    offerList.innerHTML += row;
+                });
+            }
+        });
+
+        // ২. ডাটা সেভ বা আপডেট করা
+        offerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitBtn = document.getElementById('save-btn');
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Processing...";
+
+            const id = document.getElementById('offer-id').value;
+            const offerData = {
+                name: document.getElementById('off-p-name').value,
+                originalPrice: document.getElementById('off-p-price').value,
+                discount: document.getElementById('off-percentage').value,
+                about: document.getElementById('off-about').value,
+                image: document.getElementById('off-image').value,
+                updatedAt: new Date()
+            };
+
+            try {
+                if (id) {
+                    await updateDoc(doc(db, "offers", id), offerData);
+                    alert("Offer updated!");
+                } else {
+                    offerData.createdAt = new Date();
+                    await addDoc(collection(db, "offers"), offerData);
+                    alert("New offer added!");
+                }
+                toggleModal('offer-modal');
+                offerForm.reset();
+            } catch (err) {
+                console.error(err);
+                alert("Error saving offer!");
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerText = "Save Offer";
+            }
+        });
+
+        // ৩. এডিট ফাংশন
+        window.editOffer = async (id) => {
+            const docRef = doc(db, "offers", id);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                document.getElementById('offer-id').value = id;
+                document.getElementById('off-p-name').value = data.name;
+                document.getElementById('off-p-price').value = data.originalPrice;
+                document.getElementById('off-percentage').value = data.discount;
+                document.getElementById('off-about').value = data.about;
+                document.getElementById('off-image').value = data.image;
+                toggleModal('offer-modal', true);
+            }
+        };
+
+        // ৪. ডিলিট ফাংশন
+        window.deleteOffer = async (id) => {
+            if (confirm("Are you sure you want to delete this offer?")) {
+                await deleteDoc(doc(db, "offers", id));
+            }
+        };
+
+    </script>
 
     <script>
         function toggleModal(modalId, isEdit = false) {
@@ -153,19 +277,13 @@
                     title.innerText = "Edit Offer Details";
                 } else {
                     title.innerText = "Create New Offer";
+                    document.getElementById('offer-id').value = ""; // আইডি ক্লিয়ার করা
                     document.getElementById('offer-form').reset();
                 }
             } else {
                 modal.classList.add('hidden');
             }
         }
-
-        document.getElementById('offer-form').onsubmit = function(e) {
-            e.preventDefault();
-            alert('Offer saved successfully!');
-            toggleModal('offer-modal');
-        };
     </script>
-    <script type="module" src="offers.js"></script>
 </body>
 </html>

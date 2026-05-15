@@ -97,8 +97,16 @@
     </footer>
 
     <script>
-        // ১. ডাটা লোড করা
-        let cart = JSON.parse(localStorage.getItem('PHRMA_CART')) || [];
+        // ১. ডাটা লোড করা - এখানে অফার পেজের ডাটাও ইনপুট নেওয়ার ব্যবস্থা করা হয়েছে
+        const CART_KEY = 'PHRMA_CART';
+        let cart = JSON.parse(localStorage.getItem(CART_KEY)) || JSON.parse(localStorage.getItem('phrma_cart')) || [];
+        
+        // সিঙ্ক্রোনাইজেশন: যদি ডাটা অন্য কী-তে থাকে তবে মূল কী-তে নিয়ে আসা
+        if(localStorage.getItem('phrma_cart')) {
+            localStorage.setItem(CART_KEY, JSON.stringify(cart));
+            localStorage.removeItem('phrma_cart');
+        }
+
         const DELIVERY_FEE = 2.00;
 
         function renderCart() {
@@ -106,7 +114,6 @@
             const badge = document.getElementById('cart-badge');
             container.innerHTML = '';
             
-            // কার্ট খালি থাকলে মেসেজ দেখাবে
             if (cart.length === 0) {
                 container.innerHTML = `
                     <div class="text-center py-20 bg-white rounded-[2rem] border-2 border-dashed border-gray-200">
@@ -123,11 +130,13 @@
             let totalQty = 0;
 
             cart.forEach(item => {
+                // অফার পেজ থেকে আসা 'quantity' কে 'qty' হিসেবে সেট করা
+                if(item.quantity && !item.qty) item.qty = item.quantity;
+                
                 const itemTotal = parseFloat(item.price) * item.qty;
                 subtotal += itemTotal;
                 totalQty += item.qty;
 
-                // ID স্ট্রিং বা নাম্বার যাই হোক হ্যান্ডেল করার জন্য '${item.id}' ব্যবহার করা হয়েছে
                 container.innerHTML += `
                 <div class="bg-white p-4 md:p-6 rounded-3xl shadow-sm border border-gray-100 flex items-center gap-4 md:gap-6 group">
                     <div class="w-20 h-20 md:w-28 md:h-28 bg-gray-50 rounded-2xl flex-shrink-0 overflow-hidden p-2">
@@ -157,7 +166,6 @@
             updateSummary(subtotal);
         }
 
-        // ২. কোয়ান্টিটি পরিবর্তন
         window.changeQty = function(id, delta) {
             const item = cart.find(p => p.id == id);
             if (item) {
@@ -167,21 +175,18 @@
             }
         }
 
-        // ৩. আইটেম রিমুভ
         window.removeItem = function(id) {
             cart = cart.filter(p => p.id != id);
             saveCart();
         }
 
-        // ৪. মেমোরিতে সেভ
         function saveCart() {
-            localStorage.setItem('PHRMA_CART', JSON.stringify(cart));
+            localStorage.setItem(CART_KEY, JSON.stringify(cart));
             renderCart();
         }
 
-        // ৫. অর্ডার সামারি আপডেট
         function updateSummary(subtotal) {
-            let discount = subtotal > 500 ? subtotal * 0.1 : 0; // ৫০০ টাকার বেশি হলে ১০% ডিসকাউন্ট
+            let discount = subtotal > 500 ? subtotal * 0.1 : 0;
             let grandTotal = subtotal > 0 ? (subtotal + DELIVERY_FEE - discount) : 0;
 
             document.getElementById('subtotal').innerText = `৳${subtotal.toFixed(2)}`;
