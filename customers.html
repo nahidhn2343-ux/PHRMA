@@ -13,13 +13,15 @@
         .sidebar-item.active { background-color: #D9F99D; color: #064E3B; font-weight: 700; }
         .card-shadow { box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05); }
 
-        /* কাস্টম স্ক্রলবার ডিজাইন */
+        /* Custom Scrollbar Design */
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #064E3B; border-radius: 10px; }
     </style>
 </head>
-<body class="text-slate-800 overflow-hidden"> <div class="flex h-screen overflow-hidden"> <aside class="w-72 bg-white border-r border-slate-100 hidden md:flex flex-col p-6 h-full flex-shrink-0">
+<body class="text-slate-800 overflow-hidden"> 
+    <div class="flex h-screen overflow-hidden"> 
+        <aside class="w-72 bg-white border-r border-slate-100 hidden md:flex flex-col p-6 h-full flex-shrink-0">
             <div class="mb-10 px-2 flex items-center gap-3">
                 <div class="w-10 h-10 bg-[#064E3B] rounded-xl flex items-center justify-center text-white font-bold text-xl">P</div>
                 <h1 class="text-xl font-black tracking-tight text-[#064E3B]">PHRMA</h1>
@@ -56,7 +58,8 @@
             </div>
         </aside>
 
-        <main class="flex-1 p-8 overflow-y-auto h-full"> <div class="flex justify-between items-center mb-10">
+        <main class="flex-1 p-8 overflow-y-auto h-full"> 
+            <div class="flex justify-between items-center mb-10">
                 <div>
                     <h2 class="text-2xl font-bold text-slate-900">User Management</h2>
                     <p class="text-slate-400 text-sm">Monitor and manage all registered users</p>
@@ -80,7 +83,7 @@
                     <h3 class="font-bold text-lg text-slate-800">All Customers</h3>
                     <div class="relative">
                         <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-300 text-sm"></i>
-                        <input type="text" placeholder="Search by name..." class="pl-10 pr-4 py-2 bg-slate-50 border-none rounded-xl text-xs outline-none focus:ring-2 ring-emerald-500/20 w-64">
+                        <input type="text" id="user-search" placeholder="Search by name or email..." class="pl-10 pr-4 py-2 bg-slate-50 border-none rounded-xl text-xs outline-none focus:ring-2 ring-emerald-500/20 w-64">
                     </div>
                 </div>
                 
@@ -108,13 +111,89 @@
         </main>
     </div>
 
-    <script>
-        function blockUser(userId) {
-            if(confirm("Are you sure you want to block this user?")) {
-                console.log("Blocking user:", userId);
+    <script type="module">
+        import { db } from "./script.js";
+        import { collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const userListBody = document.getElementById('user-list-body');
+        const totalCountEl = document.getElementById('total-users-count');
+        const noUsersEl = document.getElementById('no-users');
+        const searchInput = document.getElementById('user-search');
+
+        let allUsers = [];
+
+        // Real-time listener for users
+        const q = query(collection(db, "users"), orderBy("createdAt", "desc"));
+        
+        onSnapshot(q, (snapshot) => {
+            allUsers = [];
+            snapshot.forEach((doc) => {
+                allUsers.push({ id: doc.id, ...doc.data() });
+            });
+            renderUsers(allUsers);
+        }, (error) => {
+            console.error("Error fetching users:", error);
+        });
+
+        function renderUsers(users) {
+            totalCountEl.innerText = users.length;
+            
+            if (users.length === 0) {
+                userListBody.innerHTML = '';
+                noUsersEl.classList.remove('hidden');
+                return;
             }
+
+            noUsersEl.classList.add('hidden');
+            userListBody.innerHTML = users.map(user => `
+                <tr class="bg-white hover:bg-slate-50 transition-all">
+                    <td class="px-6 py-4 rounded-l-2xl border-y border-l border-slate-50">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 font-bold">
+                                ${user.fullName ? user.fullName.charAt(0) : 'U'}
+                            </div>
+                            <div>
+                                <p class="font-bold text-slate-900">${user.fullName || 'Anonymous'}</p>
+                                <p class="text-slate-400 text-xs">${user.email}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 border-y border-slate-50 text-slate-500 font-medium">
+                        ${user.joinedDate || 'N/A'}
+                    </td>
+                    <td class="px-6 py-4 border-y border-slate-50 font-semibold text-slate-600">
+                        ${user.role || 'Customer'}
+                    </td>
+                    <td class="px-6 py-4 border-y border-slate-50">
+                        <span class="px-3 py-1 bg-emerald-50 text-emerald-600 text-[10px] font-black rounded-full uppercase tracking-widest">
+                            ${user.status || 'Active'}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 rounded-r-2xl border-y border-r border-slate-50 text-right">
+                        <button onclick="blockUser('${user.id}')" class="w-8 h-8 text-slate-300 hover:text-rose-500 transition-colors">
+                            <i class="fa-solid fa-ban"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
         }
+
+        // Search Filter Logic
+        searchInput.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            const filtered = allUsers.filter(u => 
+                u.fullName?.toLowerCase().includes(term) || 
+                u.email?.toLowerCase().includes(term)
+            );
+            renderUsers(filtered);
+        });
+
+        // Block logic (can be expanded later)
+        window.blockUser = (userId) => {
+            if(confirm("Are you sure you want to block this user?")) {
+                alert("Action performed for user ID: " + userId);
+            }
+        };
     </script>
-    <script type="module" src="customers.js"></script>
 </body>
 </html>

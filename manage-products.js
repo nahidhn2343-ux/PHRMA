@@ -1,7 +1,7 @@
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-// Firebase Config
+// Firebase Configuration
 const firebaseConfig = {
     apiKey: "AIzaSyDYzJkinF_J4ff9T5Bi9hESxlo_ue8Szs8",
     authDomain: "phrma-eb265.firebaseapp.com",
@@ -11,7 +11,7 @@ const firebaseConfig = {
     appId: "1:79240146779:web:d01a63247566aeb8ea347e"
 };
 
-// অ্যাপ চেক করে ইনিশিয়ালাইজ করা (ডুপ্লিকেট এরর এড়াতে)
+// Initialize Firebase (Avoid duplicate initialization)
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 const db = getFirestore(app);
 
@@ -19,7 +19,10 @@ const productForm = document.getElementById('product-form');
 const productList = document.getElementById('product-list');
 const emptyState = document.getElementById('empty-state');
 
-// ১. ডাটা রেন্ডার করা (আপনার স্টাইল অনুযায়ী)
+/**
+ * 1. Data Rendering Logic
+ * Listens to Firestore changes and updates the table UI
+ */
 onSnapshot(collection(db, "products"), (snapshot) => {
     productList.innerHTML = "";
     if (snapshot.empty) {
@@ -38,7 +41,7 @@ onSnapshot(collection(db, "products"), (snapshot) => {
                             <span class="font-bold text-slate-700">${product.name}</span>
                         </div>
                     </td>
-                    <td class="px-6 py-5 font-bold text-slate-900">৳ ${product.price}</td>
+                    <td class="px-6 py-5 font-bold text-slate-900">$ ${product.price}</td>
                     <td class="px-6 py-5 text-slate-500 text-xs font-semibold uppercase">${product.category}</td>
                     <td class="px-6 py-5">
                         <span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-[10px] font-black uppercase">Active</span>
@@ -58,7 +61,10 @@ onSnapshot(collection(db, "products"), (snapshot) => {
     }
 });
 
-// ২. প্রোডাক্ট সেভ অথবা আপডেট করা (about ফিল্ডসহ)
+/**
+ * 2. Save or Update Product
+ * Handles form submission for both new entries and updates
+ */
 productForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const productId = document.getElementById('p-id').value;
@@ -67,31 +73,35 @@ productForm.addEventListener('submit', async (e) => {
         name: document.getElementById('p-name').value,
         price: document.getElementById('p-price').value,
         category: document.getElementById('p-cat').value,
-        about: document.getElementById('p-about').value, // ডেসক্রিপশন ফিল্ড
+        about: document.getElementById('p-about').value,
         image: document.getElementById('p-image').value,
         updatedAt: new Date()
     };
 
     try {
         if (productId) {
-            // আপডেট লজিক
+            // Update existing document
             await updateDoc(doc(db, "products", productId), productData);
             alert("Product updated successfully!");
         } else {
-            // নতুন ডাটা অ্যাড লজিক
+            // Add new document
             productData.createdAt = new Date();
             await addDoc(collection(db, "products"), productData);
-            alert("New product added to Firestore!");
+            alert("New product added successfully!");
         }
         productForm.reset();
+        // Close modal if toggleModal function exists globally
         if(typeof toggleModal === 'function') toggleModal('product-modal'); 
     } catch (error) {
         console.error("Error saving data:", error);
-        alert("Action failed! Check console.");
+        alert("Operation failed. Please check console for details.");
     }
 });
 
-// ৩. এডিট ফাংশন (ডাটা ফিল্ডে বসানো)
+/**
+ * 3. Edit Function
+ * Fetches data and populates form for editing
+ */
 window.editProduct = async (id) => {
     try {
         const docRef = doc(db, "products", id);
@@ -103,9 +113,10 @@ window.editProduct = async (id) => {
             document.getElementById('p-name').value = data.name;
             document.getElementById('p-price').value = data.price;
             document.getElementById('p-cat').value = data.category;
-            document.getElementById('p-about').value = data.about || ""; // about ফিল্ড পপুলেট করা
+            document.getElementById('p-about').value = data.about || "";
             document.getElementById('p-image').value = data.image;
             
+            // Open modal in edit mode
             if(typeof toggleModal === 'function') toggleModal('product-modal', true);
         }
     } catch (error) {
@@ -113,13 +124,17 @@ window.editProduct = async (id) => {
     }
 };
 
-// ৪. ডিলিট ফাংশন
+/**
+ * 4. Delete Function
+ * Removes product after user confirmation
+ */
 window.deleteProduct = async (id) => {
     if(confirm("Are you sure you want to delete this product?")) {
         try {
             await deleteDoc(doc(db, "products", id));
         } catch (error) {
-            alert("Error deleting product.");
+            console.error("Error deleting product:", error);
+            alert("Failed to delete product.");
         }
     }
 };

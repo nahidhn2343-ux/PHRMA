@@ -88,7 +88,6 @@
         </div>
 
         <div class="w-full md:w-1/2 flex flex-col max-h-[50vh] md:max-h-full bg-white overflow-hidden">
-            
             <div class="flex-grow overflow-y-auto custom-scroll p-6 md:p-10">
                 <span class="text-teal-600 font-bold text-xs tracking-widest uppercase mb-2 block">Premium Product</span>
                 <h2 id="modalName" class="text-2xl md:text-4xl font-black text-gray-900 mb-4 leading-tight"></h2>
@@ -120,7 +119,62 @@
     </div>
 </div>
 
-    <script type="module">
+<footer class="bg-white border-t border-gray-100 pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+            <div>
+                <img src="img/phrma2.png" alt="PHRMA Logo" class="h-12 mb-6 rounded">
+                <p class="text-gray-500 leading-relaxed">Your trusted pharmacy partner. We ensure high-quality healthcare products are delivered straight to your door.</p>
+                <div class="flex space-x-4 mt-6">
+                    <a href="#" class="text-gray-400 hover:text-teal-500 transition text-xl"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-teal-500 transition text-xl"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-teal-500 transition text-xl"><i class="fa-brands fa-whatsapp"></i></a>
+                </div>
+            </div>
+            <div>
+                <h4 class="text-gray-900 font-bold mb-6">Quick Links</h4>
+                <ul class="space-y-4 text-gray-500">
+                    <li><a href="shop.html" class="hover:text-teal-500 transition">All Medicines</a></li>
+                    <li><a href="upload.html" class="hover:text-teal-500 transition">Upload Prescription</a></li>
+                    <li><a href="offer.html" class="hover:text-teal-500 transition">Special Offers</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-gray-900 font-bold mb-6">Support</h4>
+                <ul class="space-y-4 text-gray-500">
+                    <li><a href="#" class="hover:text-teal-500 transition">Order Tracking</a></li>
+                    <li><a href="#" class="hover:text-teal-500 transition">Return Policy</a></li>
+                    <li><a href="#" class="hover:text-teal-500 transition">Terms & Conditions</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-gray-900 font-bold mb-6">Contact Us</h4>
+                <ul class="space-y-4">
+                    <li class="flex items-center space-x-3 text-gray-500">
+                        <i class="fa-solid fa-location-dot text-teal-500"></i>
+                        <span>New York, USA</span>
+                    </li>
+                    <li class="flex items-center space-x-3 text-gray-500">
+                        <i class="fa-solid fa-phone text-teal-500"></i>
+                        <span>+1 234 567 8900</span>
+                    </li>
+                    <li class="flex items-center space-x-3 text-gray-500">
+                        <i class="fa-solid fa-envelope text-teal-500"></i>
+                        <span>support@phrma.com</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 mt-16 pt-8 border-t border-gray-50 flex flex-col md:flex-row justify-between items-center text-gray-400 text-sm">
+            <p>&copy; 2026 PHRMA. All rights reserved.</p>
+            <div class="flex items-center space-x-6 mt-4 md:mt-0">
+                <i class="fa-brands fa-cc-visa text-2xl"></i>
+                <i class="fa-brands fa-cc-mastercard text-2xl"></i>
+                <span class="font-bold text-teal-500 uppercase tracking-widest text-xs">Cash on Delivery Available</span>
+            </div>
+        </div>
+    </footer>
+
+<script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
@@ -174,7 +228,7 @@
             const cleanAbout = data.about ? data.about.replace(/'/g, "\\'").replace(/\n/g, " ") : "";
             const cleanName = data.name ? data.name.replace(/'/g, "\\'") : "";
 
-            // কার্ডের ডিজাইন আপডেট করা হয়েছে যাতে মোবাইল ভিউতে ২ কলামে সুন্দর দেখায়
+            // Grid card updated for 2-column mobile view
             const card = `
                 <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] p-3 md:p-5 shadow-sm border border-gray-100 hover:shadow-xl transition-all group cursor-pointer flex flex-col h-full">
                     <div onclick="openModal('${id}', '${cleanName}', '${data.image}', ${data.originalPrice}, ${data.discount}, '${cleanAbout}')" class="flex-grow">
@@ -186,8 +240,8 @@
                     </div>
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-3 md:mt-4 gap-2">
                         <div>
-                            <p class="text-sm md:text-xl font-black text-teal-600">৳ ${discPrice}</p>
-                            <p class="text-[10px] md:text-xs text-gray-300 line-through">৳ ${data.originalPrice}</p>
+                            <p class="text-sm md:text-xl font-black text-teal-600">$ ${discPrice}</p>
+                            <p class="text-[10px] md:text-xs text-gray-300 line-through">$ ${data.originalPrice}</p>
                         </div>
                         <button onclick="event.stopPropagation(); addToCart('${id}', '${cleanName}', ${discPrice}, '${data.image}')" class="bg-gray-900 text-white w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl flex items-center justify-center hover:bg-teal-600 transition-colors shrink-0">
                             <i class="fa-solid fa-cart-plus text-xs md:text-base"></i>
@@ -207,8 +261,8 @@
         document.getElementById('modalImg').src = img;
         document.getElementById('modalName').innerText = name;
         document.getElementById('modalOffBadge').innerText = `${disc}% OFF`;
-        document.getElementById('modalOfferPrice').innerText = `৳ ${discPrice}`;
-        document.getElementById('modalOrigPrice').innerText = `৳ ${orig}`;
+        document.getElementById('modalOfferPrice').innerText = `$ ${discPrice}`;
+        document.getElementById('modalOrigPrice').innerText = `$ ${orig}`;
         document.getElementById('modalDesc').innerText = about;
         
         document.getElementById('offerModal').classList.remove('hidden');
@@ -255,6 +309,5 @@
 
     updateCartBadge();
 </script>
-
 </body>
 </html>

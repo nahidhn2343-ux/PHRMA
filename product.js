@@ -73,16 +73,20 @@ productForm.addEventListener('submit', async (e) => {
     try {
         if (id) {
             await updateDoc(doc(db, "products", id), data);
+            alert("Product updated successfully!");
         } else {
             await addDoc(collection(db, "products"), data);
+            alert("Product added successfully!");
         }
         closeModal();
-    } catch (e) { alert("Error saving product: " + e); }
+    } catch (e) { 
+        alert("Error saving product: " + e); 
+    }
 });
 
 // Delete Product
 window.deleteProduct = async (id) => {
-    if(confirm("প্রোডাক্টটি ডিলিট করতে চান?")) {
+    if(confirm("Are you sure you want to delete this product?")) {
         await deleteDoc(doc(db, "products", id));
     }
 };

@@ -12,48 +12,42 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F8FAFC; }
         .sidebar-item.active { background-color: #D9F99D; color: #064E3B; font-weight: 700; }
         .card-shadow { box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05); }
-
-        /* স্ক্রলবার ডিজাইন (ঐচ্ছিক, সুন্দর দেখানোর জন্য) */
+        /* Custom scrollbar styling */
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #064E3B; border-radius: 10px; }
     </style>
 </head>
-<body class="text-slate-800 overflow-hidden"> <div class="flex h-screen overflow-hidden"> <aside class="w-72 bg-white border-r border-slate-100 hidden md:flex flex-col p-6 h-full flex-shrink-0">
+<body class="text-slate-800 overflow-hidden"> 
+    <div class="flex h-screen overflow-hidden"> 
+        <aside class="w-72 bg-white border-r border-slate-100 hidden md:flex flex-col p-6 h-full flex-shrink-0">
             <div class="mb-10 px-2 flex items-center gap-3">
                 <div class="w-10 h-10 bg-[#064E3B] rounded-xl flex items-center justify-center text-white font-bold text-xl">P</div>
                 <h1 class="text-xl font-black tracking-tight text-[#064E3B]">PHRMA</h1>
             </div>
-            
             <nav class="flex-1 space-y-2">
                 <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 px-2">Menu</p>
-                
                 <a href="admin.html" class="sidebar-item active flex items-center space-x-3 p-3 rounded-2xl transition-all">
                     <i class="fa-solid fa-truck-fast w-5 text-center"></i>
                     <span class="text-sm">Live Orders</span>
                 </a>
-
                 <a href="manage-products.html" class="flex items-center space-x-3 text-slate-500 hover:bg-slate-50 p-3 rounded-2xl transition-all">
                     <i class="fa-solid fa-pills w-5 text-center"></i>
                     <span class="text-sm font-medium">Manage Products</span>
                 </a>
-
                 <a href="prescriptions.html" class="flex items-center space-x-3 text-slate-500 hover:bg-slate-50 p-3 rounded-2xl transition-all">
                     <i class="fa-solid fa-file-medical w-5 text-center"></i>
                     <span class="text-sm font-medium">Prescriptions</span>
                 </a>
-
                 <a href="offers.html" class="flex items-center space-x-3 text-slate-500 hover:bg-slate-50 p-3 rounded-2xl transition-all">
                     <i class="fa-solid fa-tags w-5 text-center"></i>
                     <span class="text-sm font-medium">Offers</span>
                 </a>
-
                 <a href="customers.html" class="flex items-center space-x-3 text-slate-500 hover:bg-slate-50 p-3 rounded-2xl transition-all">
                     <i class="fa-solid fa-users w-5 text-center"></i>
                     <span class="text-sm font-medium">Customers</span>
                 </a>
             </nav>
-
             <div class="mt-auto pt-6 border-t border-slate-50">
                 <a href="login.html" class="flex items-center space-x-3 text-rose-500 font-bold text-sm px-2 hover:opacity-80">
                     <i class="fa-solid fa-right-from-bracket"></i>
@@ -62,7 +56,8 @@
             </div>
         </aside>
 
-        <main class="flex-1 p-8 overflow-y-auto h-full"> <div class="flex justify-between items-center mb-10">
+        <main class="flex-1 p-8 overflow-y-auto h-full"> 
+            <div class="flex justify-between items-center mb-10">
                 <div>
                     <h2 class="text-2xl font-bold text-slate-900">Live Orders Dashboard</h2>
                     <p class="text-slate-400 text-sm">Welcome back, Admin</p>
@@ -112,14 +107,79 @@
                                 <th class="px-4 py-5 text-right">Action</th>
                             </tr>
                         </thead>
-                        <tbody id="order-rows" class="divide-y divide-slate-50 text-sm">
-                            </tbody>
+                        <tbody id="order-rows" class="divide-y divide-slate-50 text-sm"></tbody>
                     </table>
                 </div>
             </div>
         </main>
     </div>
 
+    <div id="orderViewModal" class="fixed inset-0 z-[150] hidden flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm transition-all">
+        <div class="bg-white w-full max-w-3xl rounded-[2.5rem] p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeOrderModal()" class="absolute top-6 right-6 text-slate-300 hover:text-rose-500 transition-colors">
+                <i class="fa-solid fa-circle-xmark text-2xl"></i>
+            </button>
+            
+            <h3 class="text-2xl font-black text-slate-900 mb-6 flex items-center gap-2">
+                <i class="fa-solid fa-receipt text-[#064E3B]"></i> Detailed Information
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 p-6 bg-slate-50 rounded-[2rem] border border-slate-100">
+                <div>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Full Name</p>
+                    <p id="view-name" class="font-bold text-slate-800 text-sm"></p>
+                </div>
+                <div>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Primary Phone</p>
+                    <p id="view-phone" class="font-bold text-slate-800 text-sm"></p>
+                </div>
+                <div>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Email Address</p>
+                    <p id="view-email" class="font-bold text-slate-800 text-sm italic"></p>
+                </div>
+                <div>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Alt. Phone</p>
+                    <p id="view-alt-phone" class="font-bold text-slate-800 text-sm"></p>
+                </div>
+                <div class="md:col-span-2">
+                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Full Delivery Address</p>
+                    <p id="view-address" class="font-bold text-slate-800 text-sm leading-relaxed"></p>
+                </div>
+                <div>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">City / District</p>
+                    <p id="view-city" class="font-bold text-slate-800 text-sm"></p>
+                </div>
+                <div>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Nearby Landmark</p>
+                    <p id="view-landmark" class="font-bold text-[#064E3B] text-sm"></p>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest px-2">Cart Summary</p>
+                <div id="view-items-list" class="space-y-3"></div>
+            </div>
+
+            <div class="mt-8 pt-6 border-t border-slate-100 flex justify-between items-center px-2">
+                <div>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Grand Total</p>
+                    <p id="view-total" class="text-3xl font-black text-[#064E3B]"></p>
+                </div>
+                <button onclick="closeOrderModal()" class="px-10 py-4 bg-slate-900 text-white text-xs font-black rounded-2xl active:scale-95 transition-all shadow-lg">
+                    Close Details
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script type="module" src="admin.js"></script>
+    <script>
+        // Modal close handler
+        window.closeOrderModal = () => {
+            const modal = document.getElementById('orderViewModal');
+            modal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        };
+    </script>
 </body>
 </html>

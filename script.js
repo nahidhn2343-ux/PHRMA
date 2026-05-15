@@ -1,8 +1,8 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, getDocs, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { getAuth, GoogleAuthProvider, FacebookAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-// ১. Firebase Configuration (আপনার আগেরটাই আছে)
+// 1. Firebase Configuration
 const firebaseConfig = {
     apiKey: "AIzaSyDYzJkinF_J4ff9T5Bi9hESxlo_ue8Szs8",
     authDomain: "phrma-eb265.firebaseapp.com",
@@ -13,19 +13,36 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
+export const db = getFirestore(app);
+export const auth = getAuth(app);
 
-// ২. Authentication Logic (অপরিবর্তিত)
+// 2. Authentication Logic
 window.handleSignUp = async () => {
     const fname = document.getElementById('signup-fname').value;
     const lname = document.getElementById('signup-lname').value;
     const email = document.getElementById('signup-email').value;
     const pass = document.getElementById('signup-password').value;
+    
     if(!email || !pass) return alert("Please enter email and password.");
+    
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
-        await updateProfile(userCredential.user, { displayName: `${fname} ${lname}` });
+        const user = userCredential.user;
+        
+        // Update Profile Display Name
+        await updateProfile(user, { displayName: `${fname} ${lname}` });
+
+        // Save User Details to Firestore 'users' collection for Admin Panel
+        await setDoc(doc(db, "users", user.uid), {
+            uid: user.uid,
+            fullName: `${fname} ${lname}`,
+            email: email,
+            role: "Customer",
+            status: "Active",
+            joinedDate: new Date().toLocaleDateString('en-GB'),
+            createdAt: new Date()
+        });
+
         alert("Account created successfully!");
         window.location.href = "index.html";
     } catch (error) { alert("Error: " + error.message); }
@@ -44,12 +61,25 @@ window.handleLogin = async () => {
 window.loginWithGoogle = async () => {
     try {
         const result = await signInWithPopup(auth, new GoogleAuthProvider());
-        alert(`Welcome ${result.user.displayName}!`);
+        const user = result.user;
+
+        // Sync Google User to Firestore (Optional but recommended)
+        await setDoc(doc(db, "users", user.uid), {
+            uid: user.uid,
+            fullName: user.displayName,
+            email: user.email,
+            role: "Customer",
+            status: "Active",
+            joinedDate: new Date().toLocaleDateString('en-GB'),
+            createdAt: new Date()
+        }, { merge: true });
+
+        alert(`Welcome ${user.displayName}!`);
         window.location.href = "index.html";
     } catch (error) { console.error(error); }
 };
 
-// ৩. Product Data & UI Sync
+// 3. Product Data & UI Sync
 let allProducts = [];
 const famousGrid = document.getElementById('famous-grid');
 const shopGrid = document.getElementById('shop-grid');
@@ -71,13 +101,12 @@ async function syncWithFirebase() {
             });
         });
         allProducts = fbData;
-        updateUI(allProducts); // শুরুতে সব প্রোডাক্ট দেখাবে
+        updateUI(allProducts); 
     } catch (e) { console.error("Data Load Error:", e); }
 }
 
-// UI আপডেট ফাংশন (এখানে ২০টি প্রোডাক্টের লিমিট দেওয়া হয়েছে)
+// UI Update Function
 function updateUI(productsToShow) {
-    // হোম পেজের জন্য ২০টি ফেমাস প্রোডাক্ট ফিল্টার
     if (famousGrid) {
         const famousProducts = productsToShow.filter(p => p.isFamous).slice(0, 20);
         renderUI(famousGrid, famousProducts);
@@ -85,11 +114,7 @@ function updateUI(productsToShow) {
     if (shopGrid) renderUI(shopGrid, productsToShow);
 }
 
-
-
-
-
-// ৪. Render UI Function (অপরিবর্তিত লজিক)
+// 4. Render UI Function
 function renderUI(container, productList) {
     if (!container) return;
     container.innerHTML = productList.map(product => `
@@ -98,13 +123,13 @@ function renderUI(container, productList) {
                 <img src="${product.img}" class="h-full object-contain">
             </div>
             <h3 class="font-bold text-gray-900 truncate">${product.name}</h3>
-            <p class="text-teal-600 font-extrabold">৳${product.price}</p>
+            <p class="text-teal-600 font-extrabold">$${product.price}</p>
             <button onclick="event.stopPropagation(); addToCart('${product.id}')" class="mt-4 bg-gray-900 text-white py-2 rounded-xl active:scale-95 transition">Add to Cart</button>
         </div>
     `).join('');
 }
 
-// ৫. Search Logic (নাম বা টাইপ অনুযায়ী ফিল্টারিং)
+// 5. Search Logic
 const searchInput = document.getElementById('mainSearch');
 if (searchInput) {
     searchInput.addEventListener('input', (e) => {
@@ -113,11 +138,11 @@ if (searchInput) {
             return product.name.toLowerCase().includes(searchTerm) || 
                    product.category.toLowerCase().includes(searchTerm);
         });
-        updateUI(filtered); // সার্চ রেজাল্ট অনুযায়ী UI আপডেট হবে
+        updateUI(filtered); 
     });
 }
 
-// ৬. Product Detail Modal (Pop-up লজিক)
+// 6. Product Detail Modal
 window.viewProduct = async (id) => {
     try {
         const docRef = doc(db, "products", id);
@@ -129,8 +154,6 @@ window.viewProduct = async (id) => {
             document.getElementById('modal-product-name').innerText = product.name;
             document.getElementById('modal-product-cat').innerText = product.category || "Medicine";
             document.getElementById('modal-product-price').innerText = product.price;
-            
-            // ডেসক্রিপশন অংশটি আপডেট
             document.getElementById('modal-product-about').innerText = product.about || "No description available.";
             
             document.getElementById('modal-add-to-cart').onclick = (e) => {
@@ -142,7 +165,7 @@ window.viewProduct = async (id) => {
             const modal = document.getElementById('product-detail-modal');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
-            document.body.style.overflow = 'hidden'; // পপআপ চলাকালীন পেজ স্ক্রল বন্ধ থাকবে
+            document.body.style.overflow = 'hidden'; 
         }
     } catch (error) { console.error("Modal Error:", error); }
 };
@@ -154,7 +177,7 @@ window.closeProductModal = () => {
     document.body.style.overflow = 'auto';
 };
 
-// ৭. Cart Logic (অপরিবর্তিত)
+// 7. Cart Logic
 window.addToCart = (productId) => {
     const product = allProducts.find(p => p.id === productId);
     if(!product) return;
@@ -174,7 +197,7 @@ function updateCartBadge() {
     }
 }
 
-// ৮. Responsive Side Menu Logic
+// 8. Responsive Side Menu Logic
 document.addEventListener('DOMContentLoaded', () => {
     const menuBtn = document.getElementById('menu-btn');
     const closeBtn = document.getElementById('close-btn');
@@ -205,15 +228,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// ৯. Page Initial Load
+// 9. Page Initial Load
 window.onload = () => {
     syncWithFirebase();
     updateCartBadge();
 };
 
-
-
-// শপ পেজের জন্য সার্চ ও ফিল্টার লজিক
+// Search and Filter for Shop page
 const shopSearchInput = document.getElementById('shopSearch');
 if (shopSearchInput) {
     shopSearchInput.addEventListener('input', (e) => {

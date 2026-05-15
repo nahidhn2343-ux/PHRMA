@@ -13,7 +13,7 @@
         .rotate-180 { transform: rotate(180deg); }
         .custom-scrollbar::-webkit-scrollbar { width: 5px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #14b8a6; border-radius: 10px; }
-        /* সাইড মেনু এনিমেশন */
+        /* Side Menu Animation */
         #side-menu.active { display: block; opacity: 1; }
     </style>
 </head>
@@ -112,7 +112,7 @@
                         </label>
                         <label class="flex items-center space-x-3 cursor-pointer group">
                             <input type="radio" name="category" value="Wellness" onchange="filterByCategory('Baby Milk')" class="w-4 h-4 text-teal-600">
-                            <span class="text-gray-600 group-hover:text-teal-600 transition">Baby Mike</span>
+                            <span class="text-gray-600 group-hover:text-teal-600 transition">Baby Milk</span>
                         </label>
                     </div>
                 </div>
@@ -141,7 +141,7 @@
                 </div>
                 <div class="p-6 md:p-10 border-t border-gray-50 bg-white">
                     <div class="flex items-center justify-between mb-6">
-                        <div class="text-3xl font-black text-teal-600">৳ <span id="modal-product-price">0.00</span></div>
+                        <div class="text-3xl font-black text-teal-600">$ <span id="modal-product-price">0.00</span></div>
                         <div class="text-xs text-emerald-600 font-bold bg-emerald-50 px-3 py-1 rounded-full">In Stock</div>
                     </div>
                     <button id="modal-add-to-cart" class="w-full bg-[#064E3B] text-white py-4 rounded-2xl font-bold hover:bg-emerald-800 transition-all flex items-center justify-center gap-3"><i class="fa-solid fa-cart-plus"></i> Add to Cart</button>
@@ -150,10 +150,65 @@
         </div>
     </div>
 
+    <footer class="bg-white border-t border-gray-100 pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+            <div>
+                <img src="img/phrma2.png" alt="PHRMA Logo" class="h-12 mb-6 rounded">
+                <p class="text-gray-500 leading-relaxed">Your trusted pharmacy partner. We ensure high-quality healthcare products are delivered straight to your door.</p>
+                <div class="flex space-x-4 mt-6">
+                    <a href="#" class="text-gray-400 hover:text-teal-500 transition text-xl"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-teal-500 transition text-xl"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-teal-500 transition text-xl"><i class="fa-brands fa-whatsapp"></i></a>
+                </div>
+            </div>
+            <div>
+                <h4 class="text-gray-900 font-bold mb-6">Quick Links</h4>
+                <ul class="space-y-4 text-gray-500">
+                    <li><a href="shop.html" class="hover:text-teal-500 transition">All Medicines</a></li>
+                    <li><a href="upload.html" class="hover:text-teal-500 transition">Upload Prescription</a></li>
+                    <li><a href="offer.html" class="hover:text-teal-500 transition">Special Offers</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-gray-900 font-bold mb-6">Support</h4>
+                <ul class="space-y-4 text-gray-500">
+                    <li><a href="#" class="hover:text-teal-500 transition">Order Tracking</a></li>
+                    <li><a href="#" class="hover:text-teal-500 transition">Return Policy</a></li>
+                    <li><a href="#" class="hover:text-teal-500 transition">Terms & Conditions</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-gray-900 font-bold mb-6">Contact Us</h4>
+                <ul class="space-y-4">
+                    <li class="flex items-center space-x-3 text-gray-500">
+                        <i class="fa-solid fa-location-dot text-teal-500"></i>
+                        <span>New York, USA</span>
+                    </li>
+                    <li class="flex items-center space-x-3 text-gray-500">
+                        <i class="fa-solid fa-phone text-teal-500"></i>
+                        <span>+1 234 567 8900</span>
+                    </li>
+                    <li class="flex items-center space-x-3 text-gray-500">
+                        <i class="fa-solid fa-envelope text-teal-500"></i>
+                        <span>support@phrma.com</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 mt-16 pt-8 border-t border-gray-50 flex flex-col md:flex-row justify-between items-center text-gray-400 text-sm">
+            <p>&copy; 2026 PHRMA. All rights reserved.</p>
+            <div class="flex items-center space-x-6 mt-4 md:mt-0">
+                <i class="fa-brands fa-cc-visa text-2xl"></i>
+                <i class="fa-brands fa-cc-mastercard text-2xl"></i>
+                <span class="font-bold text-teal-500 uppercase tracking-widest text-xs">Cash on Delivery Available</span>
+            </div>
+        </div>
+    </footer>
+
     <script type="module" src="script.js"></script>
     
     <script>
-        // ১. বার্গার মেনু লজিক (নিশ্চিত করা হয়েছে যেন Shop পেজেও কাজ করে)
+        // 1. Sidebar Menu Logic (Ensured to work on Shop page)
         document.addEventListener('DOMContentLoaded', () => {
             const menuBtn = document.getElementById('menu-btn');
             const closeBtn = document.getElementById('close-btn');
@@ -179,7 +234,7 @@
             if (closeBtn) closeBtn.onclick = closeMenu;
             if (sideMenu) sideMenu.onclick = (e) => { if(e.target === sideMenu) closeMenu(); };
 
-            // ২. ক্যাটাগরি ড্রপডাউন লজিক (মোবাইলের জন্য)
+            // 2. Category Dropdown Logic (for Mobile)
             const trigger = document.getElementById('category-trigger');
             const listContainer = document.getElementById('category-list-container');
             const icon = document.getElementById('dropdown-icon');
@@ -194,14 +249,14 @@
                 };
             }
 
-            // ৩. অটো-ক্লোজ লজিক: ক্যাটাগরি সিলেক্ট করলে ড্রপডাউন বন্ধ হয়ে যাবে
+            // 3. Auto-close Logic: Dropdown closes when a category is selected
             categoryRadios.forEach(radio => {
                 radio.addEventListener('change', () => {
                     if (window.innerWidth < 1024) {
                         setTimeout(() => {
                             listContainer.classList.add('hidden');
                             icon.classList.remove('rotate-180');
-                        }, 300); // কাস্টমার যেন ক্লিকটা দেখতে পায় তাই সামান্য দেরি
+                        }, 300); // Slight delay so users see the click
                     }
                 });
             });

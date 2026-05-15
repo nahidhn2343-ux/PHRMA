@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | PHRMA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #0d9488; border-radius: 10px; }
+        .modal-blur { backdrop-filter: blur(8px); background: rgba(0, 0, 0, 0.4); }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+
+    <nav class="bg-white border-b border-gray-100 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-2">
+                <img src="img/phrma2.png" alt="PHRMA Logo" class="h-12 md:h-16 w-auto object-contain">
+            </a>
+            <a href="cart.html" class="text-sm font-bold text-gray-500 hover:text-teal-600 flex items-center gap-2">
+                <i class="fa-solid fa-arrow-left"></i> Back to Cart
+            </a>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 py-8 md:py-12">
+        <div class="flex flex-col lg:flex-row gap-8">
+            
+            <div class="w-full lg:w-[70%] space-y-6">
+                <div class="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
+                    <h2 class="text-2xl font-black text-gray-900 mb-6 flex items-center gap-3">
+                        <i class="fa-solid fa-truck-fast text-teal-600"></i> Shipping Details
+                    </h2>
+                    
+                    <form id="shippingForm" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="space-y-2">
+                            <label class="text-sm font-bold text-gray-700 ml-1">Full Name</label>
+                            <input type="text" id="fullName" required placeholder="Enter your name" class="w-full px-5 py-3 rounded-xl bg-gray-50 border border-gray-100 focus:ring-2 focus:ring-teal-500 outline-none transition-all">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-sm font-bold text-gray-700 ml-1">Phone Number</label>
+                            <input type="tel" id="phone" required placeholder="Enter phone number" class="w-full px-5 py-3 rounded-xl bg-gray-50 border border-gray-100 focus:ring-2 focus:ring-teal-500 outline-none transition-all">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-sm font-bold text-gray-700 ml-1">Email Address</label>
+                            <input type="email" id="email" required placeholder="example@mail.com" class="w-full px-5 py-3 rounded-xl bg-gray-50 border border-gray-100 focus:ring-2 focus:ring-teal-500 outline-none transition-all">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-sm font-bold text-gray-700 ml-1">Alternative Phone (Optional)</label>
+                            <input type="tel" id="altPhone" placeholder="Emergency contact number" class="w-full px-5 py-3 rounded-xl bg-gray-50 border border-gray-100 focus:ring-2 focus:ring-teal-500 outline-none transition-all">
+                        </div>
+                        <div class="md:col-span-2 space-y-2">
+                            <label class="text-sm font-bold text-gray-700 ml-1">Full Delivery Address</label>
+                            <textarea id="address" required rows="3" placeholder="Apartment, Suite, Unit, Street address..." class="w-full px-5 py-3 rounded-xl bg-gray-50 border border-gray-100 focus:ring-2 focus:ring-teal-500 outline-none transition-all"></textarea>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-sm font-bold text-gray-700 ml-1">City / District</label>
+                            <input type="text" id="city" required placeholder="e.g. New York" class="w-full px-5 py-3 rounded-xl bg-gray-50 border border-gray-100 focus:ring-2 focus:ring-teal-500 outline-none transition-all">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-sm font-bold text-gray-700 ml-1">Nearby Landmark</label>
+                            <input type="text" id="landmark" placeholder="e.g. Near ABC School" class="w-full px-5 py-3 rounded-xl bg-gray-50 border border-gray-100 focus:ring-2 focus:ring-teal-500 outline-none transition-all">
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="w-full lg:w-[30%]">
+                <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-gray-100 sticky top-24">
+                    <h3 class="text-xl font-black text-gray-900 mb-6">Order Summary</h3>
+                    
+                    <div id="checkoutItems" class="space-y-4 max-h-[300px] overflow-y-auto custom-scroll pr-2 mb-6">
+                    </div>
+
+                    <div class="space-y-3 border-t border-gray-50 pt-4">
+                        <div class="flex justify-between text-gray-500">
+                            <span>Subtotal</span>
+                            <span id="subtotal">$ 0</span>
+                        </div>
+                        <div class="flex justify-between text-gray-500">
+                            <span>Delivery Fee</span>
+                            <span id="delivery-fee">$ 0</span>
+                        </div>
+                        <div class="flex justify-between items-center pt-2 text-gray-900 font-black text-xl">
+                            <span>Total</span>
+                            <span id="total" class="text-teal-600">$ 0</span>
+                        </div>
+                    </div>
+
+                    <button onclick="openPaymentModal()" class="w-full mt-8 bg-teal-600 hover:bg-teal-700 text-white font-black py-4 rounded-xl shadow-lg transition-all active:scale-95">
+                        Pay Now
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="paymentModal" class="fixed inset-0 z-[100] modal-blur hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-[2.5rem] p-8 shadow-2xl relative">
+            <button onclick="closeModal('paymentModal')" class="absolute top-6 right-6 text-gray-400 hover:text-rose-500"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <h3 class="text-2xl font-black text-gray-900 mb-2">Select Payment</h3>
+            <p class="text-gray-500 text-sm mb-8">Choose your preferred payment method</p>
+
+            <div class="grid grid-cols-1 gap-3">
+                <div onclick="selectMethod('card', 'Visa Card')" class="flex items-center gap-4 p-4 rounded-2xl border-2 border-gray-100 hover:border-teal-500 cursor-pointer transition-all">
+                    <div class="w-12 h-8 bg-gray-50 rounded flex items-center justify-center"><i class="fa-brands fa-cc-visa text-blue-600 text-2xl"></i></div>
+                    <span class="font-bold text-gray-800">Visa Card</span>
+                </div>
+                <div onclick="selectMethod('card', 'Mastercard')" class="flex items-center gap-4 p-4 rounded-2xl border-2 border-gray-100 hover:border-teal-500 cursor-pointer transition-all">
+                    <div class="w-12 h-8 bg-gray-50 rounded flex items-center justify-center"><i class="fa-brands fa-cc-mastercard text-orange-500 text-2xl"></i></div>
+                    <span class="font-bold text-gray-800">Mastercard</span>
+                </div>
+                <div onclick="selectMethod('cod', 'COD')" class="flex items-center gap-4 p-4 rounded-2xl border-2 border-gray-100 hover:border-teal-500 cursor-pointer transition-all">
+                    <div class="w-12 h-8 bg-gray-50 rounded flex items-center justify-center"><i class="fa-solid fa-truck-ramp-box text-emerald-600 text-xl"></i></div>
+                    <span class="font-bold text-gray-800">Cash on Delivery</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="confirmModal" class="fixed inset-0 z-[110] modal-blur hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-[2.5rem] p-8 shadow-2xl relative">
+            <button onclick="closeModal('confirmModal')" class="absolute top-6 right-6 text-gray-400 hover:text-rose-500"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <h3 id="confirmTitle" class="text-2xl font-black text-gray-900 mb-6 italic text-teal-600">Payment Details</h3>
+
+            <div id="cardFields" class="space-y-4 mb-8">
+                <input type="text" placeholder="Cardholder Name" class="w-full px-5 py-3 rounded-xl bg-gray-50 border border-gray-100 outline-none focus:ring-2 focus:ring-teal-500">
+                <input type="text" placeholder="Card Number" class="w-full px-5 py-3 rounded-xl bg-gray-50 border border-gray-100 outline-none focus:ring-2 focus:ring-teal-500">
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="text" placeholder="MM/YY" class="px-5 py-3 rounded-xl bg-gray-50 border border-gray-100 outline-none focus:ring-2 focus:ring-teal-500">
+                    <input type="password" placeholder="CVV" class="px-5 py-3 rounded-xl bg-gray-50 border border-gray-100 outline-none focus:ring-2 focus:ring-teal-500">
+                </div>
+            </div>
+
+            <div id="codMessage" class="hidden text-gray-600 mb-8 bg-emerald-50 p-5 rounded-2xl border border-emerald-100">
+                <p class="text-sm leading-relaxed">You have selected <b>Cash on Delivery</b>. Please keep <b>$<span class="finalTotal"></span></b> ready when the rider arrives at your doorstep.</p>
+            </div>
+
+            <button id="finalBtn" onclick="finishOrder()" class="w-full bg-gray-900 text-white font-black py-4 rounded-xl shadow-lg hover:bg-teal-600 transition-all uppercase tracking-wider">
+                Confirm Order
+            </button>
+        </div>
+    </div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDYzJkinF_J4ff9T5Bi9hESxlo_ue8Szs8",
+        authDomain: "phrma-eb265.firebaseapp.com",
+        projectId: "phrma-eb265",
+        storageBucket: "phrma-eb265.firebasestorage.app",
+        messagingSenderId: "79240146779",
+        appId: "1:79240146779:web:d01a63247566aeb8ea347e"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const CART_KEY = 'PHRMA_CART';
+    let selectedPaymentMethod = '';
+
+    const loadCheckoutData = () => {
+        const cart = JSON.parse(localStorage.getItem(CART_KEY)) || [];
+        const container = document.getElementById('checkoutItems');
+        let subtotal = 0;
+
+        if (cart.length === 0) {
+            window.location.href = 'index.html';
+            return;
+        }
+
+        container.innerHTML = cart.map(item => {
+            const price = parseFloat(item.price) || 0;
+            const qty = parseInt(item.qty) || 0;
+            subtotal += (price * qty);
+            return `
+                <div class="flex items-center gap-4 bg-gray-50/50 p-3 rounded-2xl">
+                    <img src="${item.img}" class="w-12 h-12 object-contain bg-white rounded-lg p-1">
+                    <div class="flex-grow">
+                        <h4 class="text-sm font-bold text-gray-800 truncate w-32">${item.name}</h4>
+                        <p class="text-[10px] text-gray-400 font-bold uppercase">Qty: ${item.qty}</p>
+                    </div>
+                    <span class="text-sm font-black text-gray-900">$${(price * qty).toFixed(2)}</span>
+                </div>
+            `;
+        }).join('');
+
+        // 1.5% Delivery Charge Calculation
+        const deliveryCharge = parseFloat((subtotal * 0.015).toFixed(2)); 
+        const grandTotal = (subtotal + deliveryCharge).toFixed(2);
+
+        document.getElementById('subtotal').innerText = `$ ${subtotal.toFixed(2)}`;
+        const deliveryEl = document.getElementById('delivery-fee');
+        if (deliveryEl) deliveryEl.innerText = `$ ${deliveryCharge}`;
+
+        document.getElementById('total').innerText = `$ ${grandTotal}`;
+        document.querySelectorAll('.finalTotal').forEach(el => el.innerText = grandTotal);
+    };
+
+    window.selectMethod = (method, name) => {
+        selectedPaymentMethod = method;
+        document.getElementById('paymentModal').classList.add('hidden');
+        document.getElementById('confirmModal').classList.remove('hidden');
+        
+        const title = document.getElementById('confirmTitle');
+        const cardFields = document.getElementById('cardFields');
+        const codMsg = document.getElementById('codMessage');
+        const btn = document.getElementById('finalBtn');
+
+        title.innerText = method === 'cod' ? "Order Confirmation" : `${name} Details`;
+        
+        if (method === 'cod') {
+            cardFields.classList.add('hidden');
+            codMsg.classList.remove('hidden');
+            btn.innerText = "Confirm Order (COD)";
+        } else {
+            cardFields.classList.remove('hidden');
+            codMsg.classList.add('hidden');
+            btn.innerText = "Confirm & Pay";
+        }
+    };
+
+    window.finishOrder = async () => {
+        const btn = document.getElementById('finalBtn');
+        const cart = JSON.parse(localStorage.getItem(CART_KEY)) || [];
+        
+        btn.disabled = true;
+        btn.innerText = "Processing...";
+
+        const orderData = {
+            customerName: document.getElementById('fullName').value,
+            phone: document.getElementById('phone').value,
+            email: document.getElementById('email').value,
+            address: document.getElementById('address').value,
+            city: document.getElementById('city').value,
+            landmark: document.getElementById('landmark').value || "N/A",
+            paymentMethod: selectedPaymentMethod,
+            items: cart,
+            totalBill: document.getElementById('total').innerText.replace('$ ', ''),
+            createdAt: serverTimestamp(),
+            status: "Pending"
+        };
+
+        try {
+            await addDoc(collection(db, "orders"), orderData);
+            alert(`Thank you, ${orderData.customerName}! Your order has been placed successfully.`);
+            localStorage.removeItem(CART_KEY);
+            window.location.href = 'index.html';
+        } catch (error) {
+            console.error("Firebase Error:", error);
+            alert("Something went wrong while placing your order. Please try again.");
+            btn.disabled = false;
+            btn.innerText = "Confirm Order";
+        }
+    };
+
+    window.openPaymentModal = () => {
+        if(!document.getElementById('shippingForm').checkValidity()) {
+            alert('Please fill in all required shipping details correctly.');
+            return;
+        }
+        document.getElementById('paymentModal').classList.remove('hidden');
+    };
+
+    window.closeModal = (id) => document.getElementById(id).classList.add('hidden');
+
+    document.addEventListener('DOMContentLoaded', loadCheckoutData);
+</script>
+
+</body>
+</html>
